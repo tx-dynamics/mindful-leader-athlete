@@ -7,11 +7,47 @@ const config = require("config");
 const moment = require("moment");
 const challangeService = require("../../models/challange/challangeService");
 const companyService = require("../../models/company/companyService");
-const { Challange } = require("../../models/challange/challangeSchema");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 const userService = require("../../models/user/userService");
 
-module.exports.getHabbitWiseRanking = async (req, res) => {};
+module.exports.getHabbitWiseRanking = async (req, res) => {
+  console.log("Company Id: ", req.body.companyId);
+  var currentDate = moment().format("YYYY-MM-DD");
+  try {
+    const challange = await challangeService.findOneAndSelect(
+      {
+        startDate: { $lte: currentDate },
+        expiryDate: { $gte: currentDate },
+        company: { $eq: req.body.companyId },
+      },
+      ["_id", "habbits", "challangeTitle"]
+    );
+    console.log("Challange: ", challange);
+
+    var flag = 0;
+    const arr = challange.habbits;
+
+    const Promises = arr.map(async (us) => {
+      const userHabbit = await userHabbitService.find({
+        habbit: { $eq: us._id },
+        company: { $eq: req.body.companyId },
+        state: { $eq: "done" },
+      });
+      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
+      var pair = { score: userHabbit.length };
+      challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
+      //console.log("User score added: ", challange.habbits[flag]);
+      flag++;
+    });
+
+    await Promise.all(Promises);
+    console.log("New challange: ", challange);
+    return res.status(200).send(challange);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
 
 module.exports.getIndividualRanking = async (req, res) => {
   console.log("Company Id: ", req.body.companyId);
@@ -117,10 +153,3 @@ module.exports.getCompanyDepartmentsRanking = async (req, res) => {
     return res.status(400).send({ error: e.message });
   }
 };
-
-// 610e8828e5e8ad080ca4f2cb  domain
-// 610e88d9deb681298804dcef dep 1
-// 610e88d9deb681298804dcf0 dep 2
-// 610e88d9deb681298804dcee  techxpert
-// 610e8828e5e8ad080ca4f2cc dep 1
-// 610e8828e5e8ad080ca4f2cd dep 2
