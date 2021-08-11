@@ -6,7 +6,7 @@ var logger = require("morgan");
 var config = require("config");
 var mongoose = require("mongoose");
 var cors = require("cors");
-// var indexRouter = require('./routes/index');
+var generalRouter = require("./routes/general");
 // var usersRouter = require('./routes/users');
 
 var app = express();
@@ -21,7 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// app.use('/', indexRouter);
+app.use("/", generalRouter);
 // app.use('/users', usersRouter);
 require("./routes")(app);
 
