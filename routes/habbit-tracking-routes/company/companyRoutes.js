@@ -6,16 +6,15 @@ const userPasswordValidator = require("../../../middlewares/user/userPasswordVal
 const userSignUpValidator = require("../../../middlewares/user/userSignUpValidator");
 const userUpdateValidator = require("../../../middlewares/user/userUpdateValidator");
 const userValidator = require("../../../middlewares/user/userValidator");
-const user = require("../../api/user");
+const company = require("../../api/company");
 
 //GET
-router.get("/:id", user.singleUser);
+//router.get("/:id", user.singleUser);
 //POST
-router.post("/signup", userValidator, userSignUpValidator, user.signUp);
-router.post("/login", userLoginValidator, user.login);
+router.post("/", company.createCompany);
+// router.post("/login", userLoginValidator, user.login);
 //PUT
-router.put("/change-password/", userPasswordValidator, user.changePassword);
-router.put("/:id", userUpdateValidator, user.updateUser);
-router.put("/addDepartment/:id", user.addDepartment);
+// router.put("/change-password/", userPasswordValidator, user.changePassword);
+// router.put("/:id", userUpdateValidator, user.updateUser);
 
 module.exports = router;

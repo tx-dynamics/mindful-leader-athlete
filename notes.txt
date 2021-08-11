@@ -1,0 +1,6 @@
+// Pod me jo employees a rhe wo sirf department k hain
+// Individual me pori company k a rhe
+
+Pod me department k sare logo ki
+All me departments rank hon ge
+Pod me employees rank ho ge

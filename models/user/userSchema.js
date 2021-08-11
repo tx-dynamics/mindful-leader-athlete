@@ -13,33 +13,33 @@ const modelSchema = new mongoose.Schema(
     birthday: String,
     role: { type: String, default: "user" },
     verified: { type: Boolean, default: false },
+    company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
+    department: String,
   },
   { timestamps: true }
 );
 
 modelSchema.statics.validate = function (data) {
   const schema = Joi.object({
-      _id: Joi.string(),
-      fullName: Joi.string().required(),
-      email: Joi.string().email().required(),
-      password: Joi.string().min(8).max(1024).required(),
-      gender: Joi.string(),
-      birthday: Joi.string(),
-    })
-    .options({ abortEarly: false });
+    _id: Joi.string(),
+    fullName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).max(1024).required(),
+    gender: Joi.string(),
+    birthday: Joi.string(),
+  }).options({ abortEarly: false });
   return schema.validate(data);
-}
+};
 
 modelSchema.statics.validateUpdate = function (data) {
-    const schema = Joi.object({
-        fullName: Joi.string(),
-        email: Joi.string().email(),
-        gender: Joi.string(),
-        birthday: Joi.string(),        
-      })
-      .options({ abortEarly: false });
-    return schema.validate(data);
-}
+  const schema = Joi.object({
+    fullName: Joi.string(),
+    email: Joi.string().email(),
+    gender: Joi.string(),
+    birthday: Joi.string(),
+  }).options({ abortEarly: false });
+  return schema.validate(data);
+};
 
 const User = mongoose.model("User", modelSchema);
 module.exports.User = User;
