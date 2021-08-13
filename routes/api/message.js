@@ -8,7 +8,8 @@ const config = require("config");
 const companyService = require("../../models/company/companyService");
 
 module.exports.getAllMessages = async (req, res) => {
-  console.log("createCompany", req.body);
+  // console.log("createCompany", req.body);
+  console.log("Inside messages");
   // console.log("Departments", req.body.data.departments);
   try {
     let data = req.body.data;

@@ -1,5 +1,5 @@
-const userRoutes = require("./habbit-tracking-routes/user/userroutes");
-const challangeRoutes = require("./habbit-tracking-routes/challange/challangeroutes");
+const userRoutes = require("./habbit-tracking-routes/user/userRoutes");
+const challangeRoutes = require("./habbit-tracking-routes/challange/challangeRoutes");
 const companyRoutes = require("./habbit-tracking-routes/company/companyRoutes");
 const dashboardRoutes = require("./habbit-tracking-routes/dashboard/dashboardRoutes");
 const messageRoutes = require("./habbit-tracking-routes/message/messageRoutes");
