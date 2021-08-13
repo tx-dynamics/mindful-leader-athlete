@@ -2,5 +2,6 @@
   "jwtPrivateKey": "habbitTrackingAppPrivateKey",
   "db1": "mongodb://localhost/habbittracking",
   "db": "mongodb+srv://techxpert:techxpert123@cluster0.yv2lm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
-  "env": "development"
+  "env": "development",
+  "clientUrl":"http://localhost:3000"
 }

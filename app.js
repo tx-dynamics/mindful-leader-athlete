@@ -41,20 +41,4 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-const db = config.get("db");
-mongoose
-  .connect(db, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    socketTimeoutMS: 0,
-    useCreateIndex: true,
-  })
-  .then(() => {
-    console.log(`Connected to db...`);
-    // require("../seeder-utils")();
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-
 module.exports = app;
