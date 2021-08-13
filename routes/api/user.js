@@ -60,7 +60,7 @@ module.exports.login = async (req, res) => {
     config.get("jwtPrivateKey")
   );
 
-  user = _.omit(user.toJSON(), "password");
+  user = _.omit(user, "password");
   user = JSON.parse(JSON.stringify(user));
   user.token = token;
   return res.send(user);
