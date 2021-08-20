@@ -17,5 +17,5 @@ router.post("/login", userLoginValidator, user.login);
 router.put("/change-password/", userPasswordValidator, user.changePassword);
 router.put("/:id", userUpdateValidator, user.updateUser);
 router.put("/addDepartment/:id", user.addDepartment);
-
+router.post("/query", user.query);
 module.exports = router;

@@ -125,3 +125,36 @@ module.exports.addDepartment = async (req, res) => {
     return res.status(400).send({ error: e.message });
   }
 };
+
+module.exports.query = async (req, res) => {
+  let user = await userService.find();
+  if (!user) return res.status(400).send({ error: "Sorry no user found!" });
+
+  console.log("sss");
+  const query = req.body.query;
+  console.log(query);
+  // console.log(query);
+  let conditions = {};
+  if (query.search) {
+    conditions.$or = [
+      { fullName: { $regex: ".*" + query.search + ".*" } },
+      { email: { $regex: ".*" + query.search + ".*" } },
+    ];
+  }
+  let skip = query.page * query.pageSize;
+  let sort = {};
+  if (query.orderBy) {
+    sort[query.orderBy.field] = query.orderDirection == "asc" ? 1 : -1;
+  }
+  console.log("ss");
+  const records = await userService.findPopulateSkipSortLimit(
+    conditions,
+    "company",
+    skip,
+    sort,
+    query.pageSize
+  );
+  const total = await userService.countDocuments(conditions);
+
+  res.send({ data: records, page: query.page, total });
+};

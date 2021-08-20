@@ -48,6 +48,39 @@ const checkHabbitState = (challange, user, date) =>
     }
   });
 
+module.exports.getSingleChallange = async (req, res) => {
+  console.log("getSingleChallange params", req.params.id);
+  // console.log("Departments", req.body.data.departments);
+  try {
+    //let data = req.body.data;
+    let challange = await challangeService.findOne({ _id: req.params.id });
+    return res.status(200).send(challange);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
+module.exports.updateChallange = async (req, res) => {
+  console.log("getSingleChallange params", req.params.id);
+  // console.log("Departments", req.body.data.departments);
+  try {
+    let data = req.body;
+    const company = await companyService.findOne({
+      companyName: data.companyName,
+    });
+    data.company = company._id;
+    let challange = await challangeService.findOneAndUpdate(
+      { _id: req.params.id },
+      data
+    );
+    return res.status(200).send(challange);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
 module.exports.createChallange = async (req, res) => {
   console.log("createChallange", req.body);
   console.log("Habbits", req.body.data.habbits);
@@ -217,6 +250,39 @@ module.exports.updateUserHabbitState = async (req, res) => {
     console.log(e);
     return res.status(400).send({ error: e.message });
   }
+};
+
+module.exports.query = async (req, res) => {
+  let user = await challangeService.find();
+  if (!user) return res.status(400).send({ error: "Sorry no user found!" });
+
+  console.log("sss");
+  const query = req.body.query;
+  console.log(query);
+  // console.log(query);
+  let conditions = {};
+  if (query.search) {
+    conditions.$or = [
+      { companyName: { $regex: ".*" + query.search + ".*" } },
+      // { email: { $regex: ".*" + query.search + ".*" } },
+    ];
+  }
+  let skip = query.page * query.pageSize;
+  let sort = {};
+  if (query.orderBy) {
+    sort[query.orderBy.field] = query.orderDirection == "asc" ? 1 : -1;
+  }
+  console.log("ss");
+  const records = await challangeService.findPopulateSkipSortLimit(
+    conditions,
+    "company",
+    skip,
+    sort,
+    query.pageSize
+  );
+  const total = await challangeService.countDocuments(conditions);
+
+  res.send({ data: records, page: query.page, total });
 };
 
 // {

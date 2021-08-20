@@ -3,6 +3,6 @@ const router = express.Router();
 
 const message = require("../../api/message");
 
-router.post("/getAll", message.getAllMessages);
+router.get("/:roomId", message.getAllMessages);
 
 module.exports = router;

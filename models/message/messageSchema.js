@@ -11,6 +11,9 @@ const modelSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    userName: String,
+    date: String,
+    time: String,
   },
   { timestamps: true }
 );
