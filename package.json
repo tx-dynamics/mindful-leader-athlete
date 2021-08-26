@@ -4,10 +4,10 @@
     "private": true,
     "homepage": "",
     "scripts": {
-        "start": "react-scripts start",
+        "start4": "react-scripts start",
         "start-client": "react-scripts start",
         "heroku-postbuild": "npm run build && (cd server && npm install)",
-        "start4": "cd server && npm start",
+        "start": "cd server && npm start",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
