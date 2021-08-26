@@ -7,9 +7,11 @@ const company = require("../../api/company");
 //router.get("/:id", user.singleUser);
 //POST
 router.get("/:id", company.getSingleCompany);
+router.get("/", company.getAllCompanies);
 router.put("/:id", company.updateCompany);
 router.post("/", company.createCompany);
 router.post("/query", company.query);
+router.delete("/:id", company.deleteCompany);
 // router.post("/login", userLoginValidator, user.login);
 //PUT
 // router.put("/change-password/", userPasswordValidator, user.changePassword);

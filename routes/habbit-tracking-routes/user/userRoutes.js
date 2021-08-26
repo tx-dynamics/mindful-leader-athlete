@@ -13,6 +13,9 @@ router.get("/:id", user.singleUser);
 //POST
 router.post("/signup", userValidator, userSignUpValidator, user.signUp);
 router.post("/login", userLoginValidator, user.login);
+router.post("/admin/login", user.adminLogin);
+router.post("/admin/signup", user.adminSignUp);
+
 //PUT
 router.put("/change-password/", userPasswordValidator, user.changePassword);
 router.put("/:id", userUpdateValidator, user.updateUser);

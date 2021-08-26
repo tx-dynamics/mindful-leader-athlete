@@ -84,18 +84,29 @@ module.exports.updateChallange = async (req, res) => {
 module.exports.createChallange = async (req, res) => {
   console.log("createChallange", req.body);
   console.log("Habbits", req.body.data.habbits);
-
   try {
     let data = req.body.data;
     const company = await companyService.findOne({
       companyName: data.companyName,
     });
+
+    var challangeExist = await challangeService.findOne({
+      expiryDate: { $gte: req.body.data.startDate },
+      company: { $eq: company._id },
+    });
+    console.log("challangeExist: ", challangeExist);
+    if (challangeExist)
+      return res.status(400).send({
+        error:
+          "Challange in this date range already exist for respective company",
+      });
+
     data.company = company._id;
     let challange = await challangeService.save(data);
     return res.status(200).send(challange);
   } catch (e) {
     console.log(e);
-    return res.status(400).send({ error: e.message });
+    return res.status(400).send({ error: "Something went wrong on server" });
   }
 };
 
@@ -285,38 +296,15 @@ module.exports.query = async (req, res) => {
   res.send({ data: records, page: query.page, total });
 };
 
-// {
-//   path: "company",
-//   // filtering field, you can use mongoDB syntax
-//   match: { _id: "610e88d9deb681298804dcee" },
-//   // Explicitly exclude `_id`, see http://bit.ly/2aEfTdB
-//   select: "companyName -_id",
-// }
-
-// const moment = require("moment");
-// const Document = require("../models/document");
-// const schedule = require("node-schedule");
-// const notifications = require("../notifications");
-// module.exports = async function () {
-//   const doc = await Document.find().populate("company");
-//   doc.forEach((doc, i) => {
-//     let a = moment(doc.expiry);
-//     let b = moment();
-
-//     if (a.diff(b, "days") >= 0 && a.diff(b, "minutes") >= 0) {
-//       console.log(
-//         "days",
-//         a.diff(b, "days"),
-//         "minutes",
-//         a.diff(b, "minutes"),
-//         "name",
-//         doc.name
-//       );
-//       let date = new Date(doc.expiry);
-//       schedule.scheduleJob(date, function () {
-//         console.log("The answer to life, the universe, and everything!");
-//         notifications.docExpiryEmail(doc.company, doc);
-//       });
-//     }
-//   });
-// };
+module.exports.deleteChallange = async (req, res) => {
+  try {
+    await challangeService.findByIdAndRemove(req.params.id);
+    return res.status(200).send({
+      msg: "The record with the given ID has been Deleted.",
+      status: 200,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};

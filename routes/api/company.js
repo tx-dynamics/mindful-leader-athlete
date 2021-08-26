@@ -11,6 +11,7 @@ const challangeService = require("../../models/challange/challangeService");
 module.exports.createCompany = async (req, res) => {
   console.log("createCompany", req.body);
   // console.log("Departments", req.body.data.departments);
+
   try {
     let data = req.body.data;
     let company = await companyService.save(data);
@@ -91,4 +92,32 @@ module.exports.query = async (req, res) => {
   const total = await companyService.countDocuments(conditions);
 
   res.send({ data: records, page: query.page, total });
+};
+
+module.exports.deleteCompany = async (req, res) => {
+  try {
+    await companyService.findByIdAndRemove(req.params.id);
+    return res.status(200).send({
+      msg: "The record with the given ID has been Deleted.",
+      status: 200,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
+module.exports.getAllCompanies = async (req, res) => {
+  // console.log("Departments", req.body.data.departments);
+  try {
+    //let data = req.body.data;
+    let company = await companyService.findAndSelect({}, [
+      "_id",
+      "companyName",
+    ]);
+    return res.status(200).send(company);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
 };
