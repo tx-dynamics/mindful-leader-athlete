@@ -75,11 +75,7 @@ export function Challanges(props) {
               className="btn btn-icon btn-light btn-hover-primary btn-sm mx-3"
             >
               <span className="svg-icon svg-icon-md svg-icon-primary">
-                <SVG
-                  src={toAbsoluteUrl(
-                    "/media/svg/icons/Communication/Write.svg"
-                  )}
-                />
+                <SVG src={toAbsoluteUrl("/media/svg/icons/Design/Write.svg")} />
               </span>
             </Link>
             <> </>
@@ -90,9 +86,7 @@ export function Challanges(props) {
               onClick={() => handleDeleteClick(row._id)}
             >
               <span className="svg-icon svg-icon-md svg-icon-danger">
-                <SVG
-                  src={toAbsoluteUrl("/media/svg/icons/General/Trash.svg")}
-                />
+                <SVG src={toAbsoluteUrl("/media/svg/icons/Design/Trash.svg")} />
               </span>
             </Link>
           </>
