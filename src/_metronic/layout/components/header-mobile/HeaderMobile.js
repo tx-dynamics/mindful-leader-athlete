@@ -65,7 +65,7 @@ export function HeaderMobile() {
             id="kt_header_mobile_topbar_toggle"
           >
             <span className="svg-icon svg-icon-xl">
-              <SVG src={toAbsoluteUrl("/media/svg/icons/General/User.svg")} />
+              <SVG src={toAbsoluteUrl("/media/svg/icons/Design/User.svg")} />
             </span>
           </button>
           {/*end::Topbar Mobile Toggle*/}
