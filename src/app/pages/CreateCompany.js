@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Button, Card } from "react-bootstrap";
 import { Notice } from "../../_metronic/_partials/controls";
 import CompanyService from "../services/CompanyService";
+import { toast } from "react-toastify";
 
 function CreateCompany(props) {
   const [companyName, setCompanyName] = useState("");
@@ -28,6 +29,11 @@ function CreateCompany(props) {
 
   let handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("SUBMIT: ", companyName, companyDomain);
+    if (companyName === "" || companyDomain === "") {
+      toast.error("No field allowed to leave empty");
+      return;
+    }
 
     try {
       const res = await CompanyService.createCompany({
@@ -35,7 +41,7 @@ function CreateCompany(props) {
         companyDomain,
         departments: formValues,
       });
-
+      toast.success("Successfully Created");
       console.log("Success", res);
       setCompanyName("");
       setCompanyDomain("");
@@ -43,6 +49,7 @@ function CreateCompany(props) {
       props.history.push("/companies");
     } catch (error) {
       console.log("Error", error);
+      toast.error(error.response.data.error);
     }
   };
 

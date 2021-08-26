@@ -62,6 +62,7 @@ function CreateChallange(props) {
     })
       .then((res) => {
         // console.log(res.error);
+        toast.success("Successfully Created");
         setChallangeTitle("");
         setCompanyName("");
         setStartDate("");
