@@ -3,7 +3,7 @@ const Joi = require("@hapi/joi"); //for validating data in mongoose
 
 const modelSchema = new mongoose.Schema(
   {
-    message: String,
+    text: String,
     roomId: {
       type: mongoose.Schema.Types.ObjectId,
     },

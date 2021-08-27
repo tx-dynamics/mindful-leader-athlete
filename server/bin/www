@@ -65,12 +65,12 @@ io.on("connect", (socket) => {
     callback();
   });
 
-  socket.on("sendMessage", async (message, callback) => {
+  socket.on("sendMessage", async (text, callback) => {
     console.log(
       "room id: ",
       socket.roomId,
       "Message: ",
-      message,
+      text,
       "User: ",
       socket.userId
     );
@@ -84,7 +84,7 @@ io.on("connect", (socket) => {
     var currentDate = moment().format("YYYY-MM-DD");
     var currentTime = moment().format("HH:mm:ss");
     const msg = await messageService.save({
-      message,
+      text,
       roomId: socket.roomId,
       user: user._id,
       userName: user.fullName,

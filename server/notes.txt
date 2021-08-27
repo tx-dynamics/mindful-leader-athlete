@@ -4,3 +4,11 @@
 Pod me department k sare logo ki
 All me departments rank hon ge
 Pod me employees rank ho ge
+
+Get Individual Score -> Individual
+Get Department Wise Score -> POD 
+Get Company Departments Ranking -> All
+Get HabbitWise Score -> Habit 
+-> user department id nahi arahi -> When you complete the habbit
+
+add department k response mein user araha usy use krein for further requests
