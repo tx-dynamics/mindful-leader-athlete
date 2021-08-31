@@ -10,39 +10,63 @@ const companyService = require("../../models/company/companyService");
 const { Challange } = require("../../models/challange/challangeSchema");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 
+const iteration = (index, user, habbitId, date, challange) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const userHabbit = await userHabbitService.findOne({
+        user: { $eq: user }, //req.body.user
+        habbit: { $eq: habbitId },
+        date: { $eq: date },
+      });
+      console.log("User Habbit: ", userHabbit);
+      var pair;
+      if (!userHabbit) {
+        pair = { state: "notDone" };
+        // stateArr.push("undone");
+      } else {
+        pair = { state: userHabbit.state };
+        // stateArr.push(userHabbit.state);
+      }
+
+      challange.habbits[index - 1] = {
+        ...challange.habbits[index - 1],
+        ...pair,
+      };
+      //console.log("NewChallange", challange.habbits[index]);
+
+      console.log("Index", index - 1);
+      // index++;
+      resolve(challange);
+    } catch (error) {
+      reject(error);
+    }
+  });
 const checkHabbitState = (challange, user, date) =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log("challange inside: ", challange, user, date);
-      var flag = 0;
+      // console.log("challange inside: ", challange, user, date);
+      var flag = 0,
+        updatedChallage;
       // var stateArr = [];
       var habbits = challange.habbits;
       const Promises = habbits.map(async (habbit) => {
         console.log("Habb: ", habbit);
-        const userHabbit = await userHabbitService.findOne({
-          user: { $eq: user }, //req.body.user
-          habbit: { $eq: habbit._id },
-          date: { $eq: date },
-        });
-        console.log("User Habbit: ", userHabbit);
-        var pair;
-        if (!userHabbit) {
-          pair = { state: "notDone" };
-          // stateArr.push("undone");
-        } else {
-          pair = { state: userHabbit.state };
-          // stateArr.push(userHabbit.state);
-        }
-
-        challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
-        //console.log("NewChallange", challange.habbits[flag]);
-
-        console.log("Flag", flag);
         flag++;
+        updatedChallage = await iteration(
+          flag,
+          user,
+          habbit._id,
+          date,
+          challange
+        );
+
+        // const getPromise = () =>
+
+        // await getPromise();
       });
       await Promise.all(Promises);
       // return challange;
-      resolve(challange);
+      resolve(updatedChallage);
     } catch (error) {
       reject(error);
     }
@@ -120,7 +144,7 @@ module.exports.getTodaysChallange = async (req, res) => {
       company: { $eq: req.body.companyId },
     });
     if (!challange) return res.status(200).send({ msg: "No challange found" });
-    console.log("challange res: ", challange);
+    // console.log("challange res: ", challange);
     // console.log("challange habbits: ", challange.habbits);
 
     const updatedChallage = await checkHabbitState(
@@ -128,7 +152,7 @@ module.exports.getTodaysChallange = async (req, res) => {
       req.body.userId,
       currentDate
     );
-    console.log("updated challange res: ", updatedChallage);
+    console.log("updated challange res: ", updatedChallage.habbits);
     //console.log("updated challange habbits: ", updatedChallage.habbits);
     return res.status(200).send(updatedChallage);
   } catch (e) {
@@ -139,7 +163,9 @@ module.exports.getTodaysChallange = async (req, res) => {
 
 module.exports.getTomorrowsChallange = async (req, res) => {
   try {
-    var tomorrow = moment().add(1, "days").format("YYYY-MM-DD");
+    var tomorrow = moment()
+      .add(1, "days")
+      .format("YYYY-MM-DD");
     var currentDate = moment().format("YYYY-MM-DD");
     console.log("Tomorrow", tomorrow);
     var challange = await challangeService.findOne({
@@ -160,7 +186,9 @@ module.exports.getTomorrowsChallange = async (req, res) => {
 
 module.exports.getYesterdaysChallange = async (req, res) => {
   try {
-    var yesterday = moment().subtract(1, "days").format("YYYY-MM-DD");
+    var yesterday = moment()
+      .subtract(1, "days")
+      .format("YYYY-MM-DD");
     var currentDate = moment().format("YYYY-MM-DD");
     console.log("Yesterday", yesterday);
     var challange = await challangeService.findOne({
