@@ -8,6 +8,7 @@ const dateRangeExist = require("../../../middlewares/challange/dateRangeExist");
 router.get("/:id", challange.getSingleChallange);
 router.put("/:id", challange.updateChallange);
 router.post("/todays", challange.getTodaysChallange);
+router.post("/date", challange.getDateWiseChallange);
 router.post("/tomorrow", challange.getTomorrowsChallange);
 router.post("/yesterday", challange.getYesterdaysChallange);
 router.post("/forDate", challange.getChallangeForDate);
