@@ -10,6 +10,68 @@ const companyService = require("../../models/company/companyService");
 const { Challange } = require("../../models/challange/challangeSchema");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 
+const todayIteration = (index, user, habbitId, date, challange) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const userHabbit = await userHabbitService.findOne({
+        user: { $eq: user }, //req.body.user
+        habbit: { $eq: habbitId },
+        date: { $eq: date },
+      });
+      console.log("User Habbit: ", userHabbit);
+      var pair;
+      if (!userHabbit) {
+        pair = { state: "notDone" };
+        // stateArr.push("undone");
+      } else {
+        pair = { state: userHabbit.state };
+        // stateArr.push(userHabbit.state);
+      }
+
+      challange.habbits[index - 1] = {
+        ...challange.habbits[index - 1],
+        ...pair,
+      };
+      //console.log("NewChallange", challange.habbits[index]);
+
+      console.log("Index", index - 1);
+      // index++;
+      resolve(challange);
+    } catch (error) {
+      reject(error);
+    }
+  });
+const todayCheckHabbitState = (challange, user, date) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      // console.log("challange inside: ", challange, user, date);
+      var flag = 0,
+        updatedChallage;
+      // var stateArr = [];
+      var habbits = challange.habbits;
+      const Promises = habbits.map(async (habbit) => {
+        console.log("Habb: ", habbit);
+        flag++;
+        updatedChallage = await todayIteration(
+          flag,
+          user,
+          habbit._id,
+          date,
+          challange
+        );
+
+        // const getPromise = () =>
+
+        // await getPromise();
+      });
+      await Promise.all(Promises);
+      // return challange;
+      resolve(updatedChallage);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
 const iteration = (
   index,
   user,
@@ -87,7 +149,32 @@ const checkHabbitState = (challange, user, date, weekStart, weekEnd) =>
     }
   });
 
-module.exports.getTodaysChallange = async (req, res) => {};
+module.exports.getTodaysChallange = async (req, res) => {
+  try {
+    var currentDate = moment().format("YYYY-MM-DD");
+    var challange = await challangeService.findOne({
+      startDate: { $lte: currentDate },
+      expiryDate: { $gte: currentDate },
+      company: { $eq: req.body.companyId },
+    });
+    if (!challange) return res.status(200).send({ msg: "No challange found" });
+    // console.log("challange res: ", challange);
+    // console.log("challange habbits: ", challange.habbits);
+
+    const updatedChallage = await todayCheckHabbitState(
+      challange,
+      req.body.userId,
+      currentDate
+    );
+    console.log("updated challange res: ", updatedChallage.habbits);
+    //console.log("updated challange habbits: ", updatedChallage.habbits);
+    return res.status(200).send(updatedChallage);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
 module.exports.getDateWiseChallange = async (req, res) => {
   try {
     console.log("Date: ", req.body.date);
