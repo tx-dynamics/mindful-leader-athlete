@@ -10,40 +10,27 @@ const companyService = require("../../models/company/companyService");
 const { Challange } = require("../../models/challange/challangeSchema");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 
-const iteration = (
-  index,
-  user,
-  habbitId,
-  date,
-  challange,
-  weekStart,
-  weekEnd
-) =>
+const iteration = (index, user, habbitId, date, challange) =>
   new Promise(async (resolve, reject) => {
     try {
-      const userHabbit = await userHabbitService.find({
+      const userHabbit = await userHabbitService.findOne({
         user: { $eq: user }, //req.body.user
         habbit: { $eq: habbitId },
-        date: { $gte: weekStart, $lte: weekEnd },
+        date: { $eq: date },
       });
       console.log("User Habbit: ", userHabbit);
-      var pair = [];
-      const datePromise = userHabbit.map((hab) => {
-        pair.push(moment(hab.date).format("YYYY-MM-DD"));
-      });
-
-      await Promise.all(datePromise);
-      console.log("HAB DATE: ", pair);
       var pair;
-      // if (!userHabbit) {
-      //   pair = { state: "notDone" };
-      // } else {
-      //   pair = { state: userHabbit.state };
-      // }
+      if (!userHabbit) {
+        pair = { state: "notDone" };
+        // stateArr.push("undone");
+      } else {
+        pair = { state: userHabbit.state };
+        // stateArr.push(userHabbit.state);
+      }
 
       challange.habbits[index - 1] = {
         ...challange.habbits[index - 1],
-        ...{ dates: pair },
+        ...pair,
       };
       //console.log("NewChallange", challange.habbits[index]);
 
@@ -54,7 +41,7 @@ const iteration = (
       reject(error);
     }
   });
-const checkHabbitState = (challange, user, date, weekStart, weekEnd) =>
+const checkHabbitState = (challange, user, date) =>
   new Promise(async (resolve, reject) => {
     try {
       // console.log("challange inside: ", challange, user, date);
@@ -70,9 +57,7 @@ const checkHabbitState = (challange, user, date, weekStart, weekEnd) =>
           user,
           habbit._id,
           date,
-          challange,
-          weekStart,
-          weekEnd
+          challange
         );
 
         // const getPromise = () =>
@@ -87,23 +72,72 @@ const checkHabbitState = (challange, user, date, weekStart, weekEnd) =>
     }
   });
 
-module.exports.getTodaysChallange = async (req, res) => {};
-module.exports.getDateWiseChallange = async (req, res) => {
+module.exports.getSingleChallange = async (req, res) => {
+  console.log("getSingleChallange params", req.params.id);
+  // console.log("Departments", req.body.data.departments);
   try {
-    console.log("Date: ", req.body.date);
-    // var currentDate = moment().format("YYYY-MM-DD");
-    var currentDate = moment(req.body.date).format("YYYY-MM-DD");
-    console.log("Date: ", currentDate);
-    const weekStart = moment(req.body.date)
-      .day("sunday")
-      .format("YYYY-MM-DD");
-    console.log(weekStart);
-    var weekEnd = moment(req.body.date)
-      .day("sunday")
-      .add(6, "days")
-      .format("YYYY-MM-DD");
-    console.log(weekEnd);
+    //let data = req.body.data;
+    let challange = await challangeService.findOne({ _id: req.params.id });
+    return res.status(200).send(challange);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
 
+module.exports.updateChallange = async (req, res) => {
+  console.log("getSingleChallange params", req.params.id);
+  // console.log("Departments", req.body.data.departments);
+  try {
+    let data = req.body;
+    const company = await companyService.findOne({
+      companyName: data.companyName,
+    });
+    data.company = company._id;
+    let challange = await challangeService.findOneAndUpdate(
+      { _id: req.params.id },
+      data
+    );
+    return res.status(200).send(challange);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
+module.exports.createChallange = async (req, res) => {
+  console.log("createChallange", req.body);
+  console.log("Habbits", req.body.data.habbits);
+  try {
+    let data = req.body.data;
+    const company = await companyService.findOne({
+      companyName: data.companyName,
+    });
+
+    var challangeExist = await challangeService.findOne({
+      expiryDate: { $gte: req.body.data.startDate },
+      company: { $eq: company._id },
+    });
+    console.log("challangeExist: ", challangeExist);
+    if (challangeExist)
+      return res.status(400).send({
+        error:
+          "Challange in this date range already exist for respective company",
+      });
+
+    data.company = company._id;
+    let challange = await challangeService.save(data);
+    return res.status(200).send(challange);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: "Something went wrong on server" });
+  }
+};
+
+module.exports.getTodaysChallange = async (req, res) => {
+  // console.log("Date: ", date);
+  try {
+    var currentDate = moment().format("YYYY-MM-DD");
     var challange = await challangeService.findOne({
       startDate: { $lte: currentDate },
       expiryDate: { $gte: currentDate },
@@ -113,25 +147,20 @@ module.exports.getDateWiseChallange = async (req, res) => {
     // console.log("challange res: ", challange);
     // console.log("challange habbits: ", challange.habbits);
 
-    var updatedChallage = await checkHabbitState(
+    const updatedChallage = await checkHabbitState(
       challange,
       req.body.userId,
-      currentDate,
-      weekStart,
-      weekEnd
+      currentDate
     );
-    updatedChallage = {
-      ...updatedChallage,
-      ...{ weekStart: weekStart },
-      ...{ weekEnd: weekEnd },
-    };
-    console.log("updated challange res: ", updatedChallage);
+    console.log("updated challange res: ", updatedChallage.habbits);
+    //console.log("updated challange habbits: ", updatedChallage.habbits);
     return res.status(200).send(updatedChallage);
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
   }
 };
+
 module.exports.getTomorrowsChallange = async (req, res) => {
   try {
     var tomorrow = moment()
@@ -203,68 +232,6 @@ module.exports.getChallangeForDate = async (req, res) => {
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
-  }
-};
-
-module.exports.getSingleChallange = async (req, res) => {
-  console.log("getSingleChallange params", req.params.id);
-  // console.log("Departments", req.body.data.departments);
-  try {
-    //let data = req.body.data;
-    let challange = await challangeService.findOne({ _id: req.params.id });
-    return res.status(200).send(challange);
-  } catch (e) {
-    console.log(e);
-    return res.status(400).send({ error: e.message });
-  }
-};
-
-module.exports.updateChallange = async (req, res) => {
-  console.log("getSingleChallange params", req.params.id);
-  // console.log("Departments", req.body.data.departments);
-  try {
-    let data = req.body;
-    const company = await companyService.findOne({
-      companyName: data.companyName,
-    });
-    data.company = company._id;
-    let challange = await challangeService.findOneAndUpdate(
-      { _id: req.params.id },
-      data
-    );
-    return res.status(200).send(challange);
-  } catch (e) {
-    console.log(e);
-    return res.status(400).send({ error: e.message });
-  }
-};
-
-module.exports.createChallange = async (req, res) => {
-  console.log("createChallange", req.body);
-  console.log("Habbits", req.body.data.habbits);
-  try {
-    let data = req.body.data;
-    const company = await companyService.findOne({
-      companyName: data.companyName,
-    });
-
-    var challangeExist = await challangeService.findOne({
-      expiryDate: { $gte: req.body.data.startDate },
-      company: { $eq: company._id },
-    });
-    console.log("challangeExist: ", challangeExist);
-    if (challangeExist)
-      return res.status(400).send({
-        error:
-          "Challange in this date range already exist for respective company",
-      });
-
-    data.company = company._id;
-    let challange = await challangeService.save(data);
-    return res.status(200).send(challange);
-  } catch (e) {
-    console.log(e);
-    return res.status(400).send({ error: "Something went wrong on server" });
   }
 };
 
