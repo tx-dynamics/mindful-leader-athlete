@@ -15,23 +15,29 @@ const modelSchema = new mongoose.Schema(
     verified: { type: Boolean, default: false },
     company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
     department: String,
+    profileImage: String,
   },
   { timestamps: true }
 );
 
-modelSchema.statics.validate = function (data) {
+modelSchema.statics.validate = function(data) {
   const schema = Joi.object({
     _id: Joi.string(),
     fullName: Joi.string().required(),
-    email: Joi.string().email().required(),
-    password: Joi.string().min(8).max(1024).required(),
+    email: Joi.string()
+      .email()
+      .required(),
+    password: Joi.string()
+      .min(8)
+      .max(1024)
+      .required(),
     gender: Joi.string(),
     birthday: Joi.string(),
   }).options({ abortEarly: false });
   return schema.validate(data);
 };
 
-modelSchema.statics.validateUpdate = function (data) {
+modelSchema.statics.validateUpdate = function(data) {
   const schema = Joi.object({
     fullName: Joi.string(),
     email: Joi.string().email(),

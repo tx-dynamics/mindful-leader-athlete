@@ -218,3 +218,71 @@ module.exports.adminSignUp = async (req, res) => {
     return res.status(400).send({ error: e });
   }
 };
+
+module.exports.editName = async (req, res) => {
+  try {
+    console.log("Edit Name: ", req.body.fullName);
+    let user = await userService.findById(req.params.id);
+    user.fullName = req.body.fullName;
+    console.log("Edit Name: ", user);
+    user = await userService.save(user);
+    user = _.omit(user, "password");
+    user = JSON.parse(JSON.stringify(user));
+    return res.status(200).send(user);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
+module.exports.editGender = async (req, res) => {
+  try {
+    console.log("Edit Gender: ", req.body.gender);
+    let user = await userService.findById(req.params.id);
+    user.gender = req.body.gender;
+    // let user = await userService.findByIdAndUpdate(
+    //   { _id: req.params.id },
+    //   { $set: { gender: req.body.gender } }
+    // );
+    console.log("Edit Gender: ", user);
+    user = await userService.save(user);
+    user = _.omit(user, "password");
+    user = JSON.parse(JSON.stringify(user));
+    return res.status(200).send(user);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
+module.exports.editBirthday = async (req, res) => {
+  try {
+    console.log("Edit Birthday: ", req.body.birthday);
+    let user = await userService.findById(req.params.id);
+    user.birthday = req.body.birthday;
+    console.log("Edit Birthday: ", user);
+    user = await userService.save(user);
+    user = _.omit(user, "password");
+    user = JSON.parse(JSON.stringify(user));
+    return res.status(200).send(user);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
+module.exports.editProfileImage = async (req, res) => {
+  try {
+    console.log("Edit Image: ", req.body.birthday);
+    let user = await userService.findById(req.params.id);
+    user.profileImage = req.body.profileImage;
+    console.log("Edit Image: ", user);
+    user = await userService.save(user);
+    user = _.omit(user, "password");
+    user = JSON.parse(JSON.stringify(user));
+    return res.status(200).send(user);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
