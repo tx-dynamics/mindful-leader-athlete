@@ -273,7 +273,7 @@ module.exports.editBirthday = async (req, res) => {
 
 module.exports.editProfileImage = async (req, res) => {
   try {
-    console.log("Edit Image: ", req.body.birthday);
+    console.log("Edit Image: ", req.body.profileImage);
     let user = await userService.findById(req.params.id);
     user.profileImage = req.body.profileImage;
     console.log("Edit Image: ", user);
