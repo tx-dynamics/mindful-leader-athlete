@@ -1,29 +1,62 @@
+import UserService from "../../../services/UserService";
 import {
   LOGIN_URL,
   ME_URL,
   REGISTER_URL,
-  REQUEST_PASSWORD_URL
+  REQUEST_PASSWORD_URL,
 } from "../_redux/authCrud";
 import userTableMock from "./userTableMock";
 
 export default function mockAuth(mock) {
-  mock.onPost(LOGIN_URL).reply(({ data }) => {
-    const { email, password } = JSON.parse(data);
+  // mock.onPost(LOGIN_URL).reply(({ data }) => {
+  //   console.log("Data: ", data);
+  //   const { email, password } = JSON.parse(data);
 
-    if (email && password) {
-      const user = userTableMock.find(
-        x =>
-          x.email.toLowerCase() === email.toLowerCase() &&
-          x.password === password
-      );
+  //   if (email && password) {
+  //     const user = userTableMock.find(
+  //       (x) =>
+  //         x.email.toLowerCase() === email.toLowerCase() &&
+  //         x.password === password
+  //     );
 
-      if (user) {
-        return [200, { ...user, password: undefined }];
+  //     if (user) {
+  //       console.log("User: ", user);
+  //       return [200, { ...user, password: undefined }];
+  //     }
+  //   }
+
+  //   return [400];
+  // });
+  mock
+    .onPost("http://localhost:5005/api/user/admin/login")
+    .reply(async ({ data }) => {
+      console.log("Data: ", data);
+      const { email, password } = JSON.parse(data);
+
+      if (email && password) {
+        const user = {
+          accessToken: "access-token-21212121212121212122121212121",
+        };
+        const returnData = await UserService.adminLogin({ email, password });
+        // UserService.adminLogin({ email, password }).then((user) => {
+        console.log("User: ", returnData);
+        if (returnData) {
+          return [200, { ...returnData, password: undefined }];
+        }
+        // });
+        // const user = userTableMock.find(
+        //   (x) =>
+        //     x.email.toLowerCase() === email.toLowerCase() &&
+        //     x.password === password
+        // );
+        console.log("Done");
+        // if (user) {
+        // return [200, { ...user, password: undefined }];
+        // }
       }
-    }
 
-    return [400];
-  });
+      return [400];
+    });
 
   mock.onPost(REGISTER_URL).reply(({ data }) => {
     const { email, fullname, username, password } = JSON.parse(data);
@@ -38,7 +71,7 @@ export default function mockAuth(mock) {
         roles: [2], // Manager
         accessToken: "access-token-" + Math.random(),
         refreshToken: "access-token-" + Math.random(),
-        pic: process.env.PUBLIC_URL + "/media/users/default.jpg"
+        pic: process.env.PUBLIC_URL + "/media/users/default.jpg",
       };
 
       userTableMock.push(user);
@@ -54,7 +87,7 @@ export default function mockAuth(mock) {
 
     if (email) {
       const user = userTableMock.find(
-        x => x.email.toLowerCase() === email.toLowerCase()
+        (x) => x.email.toLowerCase() === email.toLowerCase()
       );
 
       if (user) {
@@ -74,7 +107,7 @@ export default function mockAuth(mock) {
       Authorization.slice("Bearer ".length);
 
     if (accessToken) {
-      const user = userTableMock.find(x => x.accessToken === accessToken);
+      const user = userTableMock.find((x) => x.accessToken === accessToken);
 
       if (user) {
         return [200, { ...user, password: undefined }];
@@ -85,9 +118,8 @@ export default function mockAuth(mock) {
   });
 
   function generateUserId() {
-    const ids = userTableMock.map(el => el.id);
+    const ids = userTableMock.map((el) => el.id);
     const maxId = Math.max(...ids);
     return maxId + 1;
   }
-  
 }

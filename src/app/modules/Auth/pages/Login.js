@@ -18,8 +18,8 @@ import { login } from "../_redux/authCrud";
 */
 
 const initialValues = {
-  email: "",
-  password: "",
+  email: "admin@admin.com",
+  password: "admin",
 };
 
 function Login(props) {
@@ -72,9 +72,10 @@ function Login(props) {
       enableLoading();
       setTimeout(() => {
         login(values.email, values.password)
-          .then(({ data: { accessToken } }) => {
+          .then((res) => {
+            console.log("Return: ", res);
             disableLoading();
-            props.login(accessToken);
+            props.login(res.data.accessToken);
           })
           .catch(() => {
             disableLoading();

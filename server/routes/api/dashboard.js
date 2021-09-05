@@ -10,6 +10,7 @@ const companyService = require("../../models/company/companyService");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 const userService = require("../../models/user/userService");
 
+//Get HabbitWise Score -> Habit
 module.exports.getHabbitWiseRanking = async (req, res) => {
   console.log("Company Id: ", req.body.companyId);
   var currentDate = moment().format("YYYY-MM-DD");
@@ -49,6 +50,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
   }
 };
 
+// Get Individual Score -> Individual
 module.exports.getIndividualRanking = async (req, res) => {
   console.log("Company Id: ", req.body.companyId);
   console.log("Start Date: ", req.body.startDate); //Challange start
@@ -86,6 +88,7 @@ module.exports.getIndividualRanking = async (req, res) => {
   }
 };
 
+// Pod me department k sare logo ki -> POD - Pod me jo employees a rhe wo sirf department k hain
 module.exports.getDepartmentWiseRanking = async (req, res) => {
   console.log("Department Id: ", req.body.departmentId);
   console.log("Date: ", req.body.startDate);
@@ -120,6 +123,7 @@ module.exports.getDepartmentWiseRanking = async (req, res) => {
   }
 };
 
+// All me departments rank hon ge -> ALL
 module.exports.getCompanyDepartmentsRanking = async (req, res) => {
   console.log("Company Id: ", req.body.companyId);
   console.log("Date: ", req.body.startDate);

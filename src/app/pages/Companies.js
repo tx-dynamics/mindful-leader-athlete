@@ -7,6 +7,9 @@ import MaterialTable from "material-table";
 import _ from "lodash";
 import CompanyService from "../services/CompanyService";
 import { toAbsoluteUrl } from "../../_metronic/_helpers";
+import { Button } from "@material-ui/core";
+import VisibilityIcon from "@material-ui/icons/Visibility";
+
 const Companies = (props) => {
   // let companies = useSelector(({ adminReducer }) => adminReducer.companies);
 
@@ -36,6 +39,23 @@ const Companies = (props) => {
         field: "companyName",
         // render: (row) => <>{row.name} </>,
         filtering: false,
+      },
+      {
+        title: "Users",
+        field: "reference",
+        filtering: false,
+        render: (row) => (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={(e) => {
+              e.preventDefault();
+              props.history.push("/company/users/" + row._id);
+            }}
+          >
+            View
+          </Button>
+        ),
       },
       // {
       //   title: "Company ID",
@@ -108,6 +128,7 @@ const Companies = (props) => {
         tableRef={userTableRef}
         detailPanel={[
           {
+            icon: VisibilityIcon,
             tooltip: "Show Departments",
             render: (rowData) => {
               //CompanyService.getSingleCompany(id)

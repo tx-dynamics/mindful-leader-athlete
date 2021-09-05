@@ -11,6 +11,7 @@ import CreateChallange from "./pages/CreateChallange";
 import EditCompany from "./pages/EditCompany";
 import CreateCompany from "./pages/CreateCompany";
 import EditChallange from "./pages/EditChallange";
+import CompanyUsers from "./pages/CompanyUsers";
 
 const GoogleMaterialPage = lazy(() =>
   import("./modules/GoogleMaterialExamples/GoogleMaterialPage")
@@ -37,6 +38,7 @@ export default function BasePage() {
       }
       <ContentRoute path="/dashboard" component={DashboardPage} />
       <ContentRoute path="/companies" component={Companies} />
+      <ContentRoute path="/company/users/:id" component={CompanyUsers} />
       <ContentRoute path="/createCompany" component={CreateCompany} />
       <ContentRoute path="/editCompany/:id" component={EditCompany} />
       <ContentRoute path="/challanges" component={Challanges} />

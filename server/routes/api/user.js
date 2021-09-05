@@ -131,39 +131,6 @@ module.exports.addDepartment = async (req, res) => {
   }
 };
 
-module.exports.query = async (req, res) => {
-  let user = await userService.find();
-  if (!user) return res.status(400).send({ error: "Sorry no user found!" });
-
-  console.log("sss");
-  const query = req.body.query;
-  console.log(query);
-  // console.log(query);
-  let conditions = {};
-  if (query.search) {
-    conditions.$or = [
-      { fullName: { $regex: ".*" + query.search + ".*" } },
-      { email: { $regex: ".*" + query.search + ".*" } },
-    ];
-  }
-  let skip = query.page * query.pageSize;
-  let sort = {};
-  if (query.orderBy) {
-    sort[query.orderBy.field] = query.orderDirection == "asc" ? 1 : -1;
-  }
-  console.log("ss");
-  const records = await userService.findPopulateSkipSortLimit(
-    conditions,
-    "company",
-    skip,
-    sort,
-    query.pageSize
-  );
-  const total = await userService.countDocuments(conditions);
-
-  res.send({ data: records, page: query.page, total });
-};
-
 module.exports.adminLogin = async (req, res) => {
   let user = await adminService.findOne({
     email: req.body.email,
@@ -183,7 +150,7 @@ module.exports.adminLogin = async (req, res) => {
 
   user = _.omit(user, "password");
   user = JSON.parse(JSON.stringify(user));
-  user.token = token;
+  user.accessToken = "access-token-8f3ae836da744329a6f93bf20594b5cc";
   return res.send(user);
 };
 
@@ -285,4 +252,81 @@ module.exports.editProfileImage = async (req, res) => {
     console.log(e);
     return res.status(400).send({ error: e.message });
   }
+};
+
+module.exports.usersQuery = async (req, res) => {
+  let user = await userService.find({ company: req.params.id });
+  if (!user) return res.status(400).send({ error: "Sorry no user found!" });
+
+  console.log("sss", user);
+  const query = req.body.query;
+  console.log(query);
+  // console.log(query);
+  let conditions = {};
+  if (query.search) {
+    conditions.$and = [
+      {
+        $or: [
+          { fullName: { $regex: ".*" + query.search + ".*" } },
+          { email: { $regex: ".*" + query.search + ".*" } },
+        ],
+      },
+      { company: req.params.id },
+    ];
+    // conditions.$or = [
+    //   { fullName: { $regex: ".*" + query.search + ".*" } },
+    //   { email: { $regex: ".*" + query.search + ".*" } },
+    // ];
+  } else {
+    conditions = { company: req.params.id };
+  }
+  let skip = query.page * query.pageSize;
+  let sort = {};
+  if (query.orderBy) {
+    sort[query.orderBy.field] = query.orderDirection == "asc" ? 1 : -1;
+  }
+  console.log("ss");
+  const records = await userService.findPopulateSkipSortLimit(
+    conditions,
+    "company",
+    skip,
+    sort,
+    query.pageSize
+  );
+  const total = await userService.countDocuments(conditions);
+
+  res.send({ data: records, page: query.page, total });
+};
+
+module.exports.query = async (req, res) => {
+  let user = await userService.find({ company: req.params.id });
+  if (!user) return res.status(400).send({ error: "Sorry no user found!" });
+
+  console.log("sss", user);
+  const query = req.body.query;
+  console.log(query);
+  // console.log(query);
+  let conditions = {};
+  if (query.search) {
+    conditions.$or = [
+      { fullName: { $regex: ".*" + query.search + ".*" } },
+      { email: { $regex: ".*" + query.search + ".*" } },
+    ];
+  }
+  let skip = query.page * query.pageSize;
+  let sort = {};
+  if (query.orderBy) {
+    sort[query.orderBy.field] = query.orderDirection == "asc" ? 1 : -1;
+  }
+  console.log("ss");
+  const records = await userService.findPopulateSkipSortLimit(
+    conditions,
+    "company",
+    skip,
+    sort,
+    query.pageSize
+  );
+  const total = await userService.countDocuments(conditions);
+
+  res.send({ data: records, page: query.page, total });
 };

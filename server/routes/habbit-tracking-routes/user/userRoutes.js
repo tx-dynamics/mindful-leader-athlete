@@ -24,5 +24,6 @@ router.put("/editName/:id", user.editName);
 router.put("/editGender/:id", user.editGender);
 router.put("/editBirthday/:id", user.editBirthday);
 router.put("/editProfileImage/:id", user.editProfileImage);
-router.post("/query", user.query);
+router.post("/query/:id", user.usersQuery);
+router.post("/query/", user.query);
 module.exports = router;
