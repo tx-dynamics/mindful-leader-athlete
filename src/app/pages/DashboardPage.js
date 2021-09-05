@@ -12,6 +12,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
+import { MixedWidget1 } from "../../_metronic/_partials/widgets";
 import CompanyService from "../services/CompanyService";
 import GetVerticalChart from "./GetVerticalChart";
 
@@ -28,7 +29,15 @@ export function DashboardPage() {
   }, []);
   return (
     <>
+      <div className="col-lg-12 col-xxl-4">
+        <MixedWidget1 className="card-stretch gutter-b" />
+      </div>
       <div className="row">
+        <div className="col-md-12">
+          <div className={`card card-custom mb-5`}>
+            <div className="card-body d-flex flex-column">Companies</div>
+          </div>
+        </div>
         {allCompanies.map((company) => (
           <div className="col-md-6" key={company._id}>
             <div className={`card card-custom mb-5`}>

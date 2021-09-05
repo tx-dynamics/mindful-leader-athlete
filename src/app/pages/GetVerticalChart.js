@@ -6,7 +6,7 @@ function GetVerticalChart({ companyId }) {
   const [companyData, setCompanyData] = useState();
   const [pods, setPods] = useState();
   const [score, setScore] = useState();
-
+  const [companyName, setCompanyName] = useState();
   useEffect(() => {
     let today = new Date();
     var date =
@@ -23,6 +23,7 @@ function GetVerticalChart({ companyId }) {
       .then((res) => {
         console.log("Res: ", res);
         setCompanyData(res);
+        setCompanyName(res.companyName);
         const dep = res.departments;
         var podresult = _.map(dep, "pod");
         setPods(podresult);
@@ -38,7 +39,7 @@ function GetVerticalChart({ companyId }) {
     labels: pods,
     datasets: [
       {
-        label: "Department Wise Score",
+        label: companyName,
         data: [10, 12, 8],
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",

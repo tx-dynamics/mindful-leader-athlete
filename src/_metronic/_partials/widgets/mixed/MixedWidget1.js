@@ -1,13 +1,13 @@
 /* eslint-disable react/jsx-no-undef */
 /* eslint-disable no-script-url,jsx-a11y/anchor-is-valid */
-import React, {useMemo, useEffect} from "react";
+import React, { useMemo, useEffect } from "react";
 import SVG from "react-inlinesvg";
 import objectPath from "object-path";
 import ApexCharts from "apexcharts";
-import {Dropdown} from "react-bootstrap";
-import {toAbsoluteUrl} from "../../../_helpers";
-import {useHtmlClassService} from "../../../layout";
-import {DropdownMenu2} from "../../dropdowns";
+import { Dropdown } from "react-bootstrap";
+import { toAbsoluteUrl } from "../../../_helpers";
+import { useHtmlClassService } from "../../../layout";
+import { DropdownMenu2 } from "../../dropdowns";
 
 export function MixedWidget1({ className }) {
   const uiService = useHtmlClassService();
@@ -30,7 +30,7 @@ export function MixedWidget1({ className }) {
         uiService.config,
         "js.colors.theme.base.danger"
       ),
-      fontFamily: objectPath.get(uiService.config, "js.fontFamily")
+      fontFamily: objectPath.get(uiService.config, "js.fontFamily"),
     };
   }, [uiService]);
 
@@ -53,26 +53,13 @@ export function MixedWidget1({ className }) {
     <div className={`card card-custom bg-gray-100 ${className}`}>
       {/* Header */}
       <div className="card-header border-0 bg-danger py-5">
-        <h3 className="card-title font-weight-bolder text-white">Sales Stat</h3>
-        <div className="card-toolbar">
-          <Dropdown className="dropdown-inline" drop="down" alignRight>
-            <Dropdown.Toggle
-              className="btn btn-transparent-white btn-sm font-weight-bolder dropdown-toggle px-5"
-              variant="transparent"
-              id="dropdown-toggle-top">
-              Export
-            </Dropdown.Toggle>
-            <Dropdown.Menu className="dropdown-menu dropdown-menu-sm dropdown-menu-right">
-              <DropdownMenu2 />
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
+        <h3 className="card-title font-weight-bolder text-white">Welcome</h3>
       </div>
       {/* Body */}
       <div className="card-body p-0 position-relative overflow-hidden">
         {/* Chart */}
         <div
-          id="kt_mixed_widget_1_chart"
+          // id="kt_mixed_widget_1_chart"
           className="card-rounded-bottom bg-danger"
           style={{ height: "200px" }}
         ></div>
@@ -87,10 +74,10 @@ export function MixedWidget1({ className }) {
                 ></SVG>
               </span>
               <a
-                href="#"
+                href="/dashboard"
                 className="text-warning font-weight-bold font-size-h6"
               >
-                Weekly Sales
+                Dashboard
               </a>
             </div>
             <div className="col bg-light-primary px-6 py-8 rounded-xl mb-7">
@@ -102,10 +89,10 @@ export function MixedWidget1({ className }) {
                 ></SVG>
               </span>
               <a
-                href="#"
+                href="/users"
                 className="text-primary font-weight-bold font-size-h6 mt-2"
               >
-                New Users
+                Users
               </a>
             </div>
           </div>
@@ -117,25 +104,23 @@ export function MixedWidget1({ className }) {
                 ></SVG>
               </span>
               <a
-                href="#"
+                href="/companies"
                 className="text-danger font-weight-bold font-size-h6 mt-2"
               >
-                Item Orders
+                Companies
               </a>
             </div>
             <div className="col bg-light-success px-6 py-8 rounded-xl">
               <span className="svg-icon svg-icon-3x svg-icon-success d-block my-2">
                 <SVG
-                  src={toAbsoluteUrl(
-                    "/media/svg/icons/Communication/Urgent-mail.svg"
-                  )}
+                  src={toAbsoluteUrl("/media/svg/icons/Design/Layers.svg")}
                 ></SVG>
               </span>
               <a
-                href="#"
+                href="/challanges"
                 className="text-success font-weight-bold font-size-h6 mt-2"
               >
-                Bug Reports
+                Challanges
               </a>
             </div>
           </div>
@@ -160,20 +145,20 @@ function getChartOptions(layoutProps) {
     series: [
       {
         name: "Net Profit",
-        data: [30, 45, 32, 70, 40, 40, 40]
-      }
+        data: [30, 45, 32, 70, 40, 40, 40],
+      },
     ],
     chart: {
       type: "area",
       height: 200,
       toolbar: {
-        show: false
+        show: false,
       },
       zoom: {
-        enabled: false
+        enabled: false,
       },
       sparkline: {
-        enabled: true
+        enabled: true,
       },
       dropShadow: {
         enabled: true,
@@ -182,41 +167,41 @@ function getChartOptions(layoutProps) {
         left: 0,
         blur: 3,
         color: strokeColor,
-        opacity: 0.5
-      }
+        opacity: 0.5,
+      },
     },
     plotOptions: {},
     legend: {
-      show: false
+      show: false,
     },
     dataLabels: {
-      enabled: false
+      enabled: false,
     },
     fill: {
       type: "solid",
-      opacity: 0
+      opacity: 0,
     },
     stroke: {
       curve: "smooth",
       show: true,
       width: 3,
-      colors: [strokeColor]
+      colors: [strokeColor],
     },
     xaxis: {
       categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug"],
       axisBorder: {
-        show: false
+        show: false,
       },
       axisTicks: {
-        show: false
+        show: false,
       },
       labels: {
         show: false,
         style: {
           colors: layoutProps.colorsGrayGray500,
           fontSize: "12px",
-          fontFamily: layoutProps.fontFamily
-        }
+          fontFamily: layoutProps.fontFamily,
+        },
       },
       crosshairs: {
         show: false,
@@ -224,9 +209,9 @@ function getChartOptions(layoutProps) {
         stroke: {
           color: layoutProps.colorsGrayGray300,
           width: 1,
-          dashArray: 3
-        }
-      }
+          dashArray: 3,
+        },
+      },
     },
     yaxis: {
       min: 0,
@@ -236,51 +221,51 @@ function getChartOptions(layoutProps) {
         style: {
           colors: layoutProps.colorsGrayGray500,
           fontSize: "12px",
-          fontFamily: layoutProps.fontFamily
-        }
-      }
+          fontFamily: layoutProps.fontFamily,
+        },
+      },
     },
     states: {
       normal: {
         filter: {
           type: "none",
-          value: 0
-        }
+          value: 0,
+        },
       },
       hover: {
         filter: {
           type: "none",
-          value: 0
-        }
+          value: 0,
+        },
       },
       active: {
         allowMultipleDataPointsSelection: false,
         filter: {
           type: "none",
-          value: 0
-        }
-      }
+          value: 0,
+        },
+      },
     },
     tooltip: {
       style: {
         fontSize: "12px",
-        fontFamily: layoutProps.fontFamily
+        fontFamily: layoutProps.fontFamily,
       },
       y: {
         formatter: function(val) {
           return "$" + val + " thousands";
-        }
+        },
       },
       marker: {
-        show: false
-      }
+        show: false,
+      },
     },
     colors: ["transparent"],
     markers: {
       colors: layoutProps.colorsThemeBaseDanger,
       strokeColor: [strokeColor],
-      strokeWidth: 3
-    }
+      strokeWidth: 3,
+    },
   };
   return options;
 }
