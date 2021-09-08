@@ -91,12 +91,30 @@ const iteration = (
       console.log("User Habbit: ", userHabbit);
       var pair = [];
       const datePromise = userHabbit.map((hab) => {
-        pair.push(moment(hab.date).format("YYYY-MM-DD"));
+        const dateFormatted = moment(hab.date).format("YYYY-MM-DD");
+        pair.push(dateFormatted);
       });
 
+      var newPairArray = [];
+
+      for (var i = 0; i < 7; i++) {
+        const onlyDate = moment(weekStart)
+          .add(i, "days")
+          .format("YYYY-MM-DD");
+        console.log("Only Date:", onlyDate);
+        if (pair.includes(onlyDate)) {
+          var newPair = { weekDay: "done" };
+          newPairArray.push(newPair);
+        } else {
+          var newPair = { weekDay: "notDone" };
+          newPairArray.push(newPair);
+        }
+      }
+
+      console.log("NewPair Array: ", newPairArray);
       await Promise.all(datePromise);
-      console.log("HAB DATE: ", pair);
-      var pair;
+      console.log("HAB DATE: ", newPairArray);
+      // var pair;
       // if (!userHabbit) {
       //   pair = { state: "notDone" };
       // } else {
@@ -105,7 +123,7 @@ const iteration = (
 
       challange.habbits[index - 1] = {
         ...challange.habbits[index - 1],
-        ...{ dates: pair },
+        ...{ dates: newPairArray, doneOrNot: pair },
       };
       //console.log("NewChallange", challange.habbits[index]);
 
