@@ -3,6 +3,10 @@ import { Bar } from "react-chartjs-2";
 import DashboardService from "../services/DashboardService";
 import _ from "lodash";
 function GetVerticalChart({ companyId }) {
+  const [clickedDataset, setClickedDataset] = useState("");
+  const [clickedElement, setClickedElement] = useState("");
+  const [clickedElements, setClickedElements] = useState("");
+
   const [companyData, setCompanyData] = useState();
   const [pods, setPods] = useState();
   const [score, setScore] = useState();
@@ -73,9 +77,32 @@ function GetVerticalChart({ companyId }) {
       ],
     },
   };
+  const getDatasetAtEvent = (dataset) => {
+    console.log("dataset: ", dataset);
+    if (!dataset.length) return;
+
+    const datasetIndex = dataset[0].datasetIndex;
+    // setClickedDataset(data.datasets[datasetIndex].label);
+    console.log("dataset Index: ", dataset[0].datasetIndex);
+  };
+
+  const getElementAtEvent = (element) => {
+    console.log("Element: ", element);
+  };
+
+  const getElementsAtEvent = (elements) => {
+    console.log("Element: ", elements);
+  };
+
   return (
     <div>
-      <Bar data={data} options={options} />
+      <Bar
+        data={data}
+        options={options}
+        getDatasetAtEvent={getDatasetAtEvent}
+        getElementAtEvent={getElementAtEvent}
+        getElementsAtEvent={getElementsAtEvent}
+      />
       <br />
     </div>
   );

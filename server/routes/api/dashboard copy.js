@@ -10,32 +10,6 @@ const companyService = require("../../models/company/companyService");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 const userService = require("../../models/user/userService");
 
-const habbitWiseIteration = (index, habbitId, companyId, challange) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const userHabbit = await userHabbitService.find({
-        habbit: { $eq: habbitId },
-        company: { $eq: companyId },
-        state: { $eq: "done" },
-      });
-      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
-      var pair = { score: userHabbit.length };
-      // challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
-      //console.log("User score added: ", challange.habbits[flag]);
-      challange.habbits[index - 1] = {
-        ...challange.habbits[index - 1],
-        ...pair,
-      };
-      //console.log("NewChallange", challange.habbits[index]);
-
-      console.log("Index", index - 1);
-      // index++;
-      resolve(challange);
-    } catch (error) {
-      reject(error);
-    }
-  });
-
 //Get HabbitWise Score -> Habit
 module.exports.getHabbitWiseRanking = async (req, res) => {
   console.log("Company Id: ", req.body.companyId);
@@ -51,65 +25,30 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
     );
     console.log("Challange: ", challange);
 
-    var flag = 0,
-      updatedChallage;
+    var flag = 0;
     const arr = challange.habbits;
 
     const Promises = arr.map(async (us) => {
-      console.log("Habb: ", us);
+      const userHabbit = await userHabbitService.find({
+        habbit: { $eq: us._id },
+        company: { $eq: req.body.companyId },
+        state: { $eq: "done" },
+      });
+      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
+      var pair = { score: userHabbit.length };
+      challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
+      //console.log("User score added: ", challange.habbits[flag]);
       flag++;
-      updatedChallage = await habbitWiseIteration(
-        flag,
-        us._id,
-        req.body.companyId,
-        challange
-      );
     });
 
     await Promise.all(Promises);
-    console.log("New challange: ", updatedChallage);
-    return res.status(200).send(updatedChallage);
+    console.log("New challange: ", challange);
+    return res.status(200).send(challange);
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
   }
 };
-
-const individualIteration = (
-  index,
-  userId,
-  currentDate,
-  startDate,
-  companyId,
-  users
-) =>
-  new Promise(async (resolve, reject) => {
-    try {
-      const userHabbit = await userHabbitService.find({
-        user: { $eq: userId },
-        date: { $lte: currentDate, $gte: startDate },
-        company: { $eq: companyId },
-        state: { $eq: "done" },
-      });
-      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
-      var pair = { score: userHabbit.length };
-      // var pair = { score: userHabbit.length };
-      users[index - 1] = { ...users[index - 1], ...pair };
-      // challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
-      //console.log("User score added: ", challange.habbits[flag]);
-      // challange.habbits[index - 1] = {
-      //   ...challange.habbits[index - 1],
-      //   ...pair,
-      // };
-      //console.log("NewChallange", challange.habbits[index]);
-
-      console.log("Index", index - 1);
-      // index++;
-      resolve(users);
-    } catch (error) {
-      reject(error);
-    }
-  });
 
 // Get Individual Score -> Individual
 module.exports.getIndividualRanking = async (req, res) => {
@@ -123,33 +62,24 @@ module.exports.getIndividualRanking = async (req, res) => {
     );
 
     console.log("Users: ", users);
-    var flag = 0,
-      updatedUsers;
+    var flag = 0;
     const Promises = users.map(async (us) => {
-      // const userHabbit = await userHabbitService.find({
-      //   user: { $eq: us._id },
-      //   date: { $lte: currentDate, $gte: req.body.startDate },
-      //   company: { $eq: us.company },
-      //   state: { $eq: "done" },
-      // });
-      // console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
-      // var pair = { score: userHabbit.length };
-      // users[flag] = { ...users[flag], ...pair };
-      // console.log("User score added: ", users[flag]);
+      const userHabbit = await userHabbitService.find({
+        user: { $eq: us._id },
+        date: { $lte: currentDate, $gte: req.body.startDate },
+        company: { $eq: us.company },
+        state: { $eq: "done" },
+      });
+      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
+      var pair = { score: userHabbit.length };
+      users[flag] = { ...users[flag], ...pair };
+      console.log("User score added: ", users[flag]);
       flag++;
-      updatedUsers = await individualIteration(
-        flag,
-        us._id,
-        currentDate,
-        req.body.startDate,
-        us.company,
-        users
-      );
     });
 
     await Promise.all(Promises);
-    console.log("New Users: ", updatedUsers);
-    const newUsers = _.pick(updatedUsers, ["fullName", "score"]);
+    console.log("New Users: ", users);
+    const newUsers = _.pick(users, ["fullName", "score"]);
     console.log("New Users: ", newUsers);
     return res.status(200).send(users);
   } catch (e) {

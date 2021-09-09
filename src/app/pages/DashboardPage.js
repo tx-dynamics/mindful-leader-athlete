@@ -29,7 +29,7 @@ export function DashboardPage() {
   }, []);
   return (
     <>
-      <div className="col-lg-12 col-xxl-4">
+      <div className="col-lg-12">
         <MixedWidget1 className="card-stretch gutter-b" />
       </div>
       <div className="row">
