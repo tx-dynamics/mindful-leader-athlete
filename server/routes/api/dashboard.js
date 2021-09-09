@@ -149,14 +149,41 @@ module.exports.getIndividualRanking = async (req, res) => {
 
     await Promise.all(Promises);
     console.log("New Users: ", updatedUsers);
-    const newUsers = _.pick(updatedUsers, ["fullName", "score"]);
-    console.log("New Users: ", newUsers);
-    return res.status(200).send(users);
+
+    return res.status(200).send(updatedUsers);
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
   }
 };
+
+const departmentWiseIteration = (
+  index,
+  userId,
+  currentDate,
+  startDate,
+  departmentId,
+  users
+) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const userHabbit = await userHabbitService.find({
+        user: { $eq: userId },
+        date: { $lte: currentDate, $gte: startDate },
+        department: { $eq: departmentId },
+        state: { $eq: "done" },
+      });
+      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
+      var pair = { score: userHabbit.length };
+      users[index - 1] = { ...users[index - 1], ...pair };
+
+      console.log("Index", index - 1);
+      // index++;
+      resolve(users);
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 // Pod me department k sare logo ki -> POD - Pod me jo employees a rhe wo sirf department k hain
 module.exports.getDepartmentWiseRanking = async (req, res) => {
@@ -169,29 +196,57 @@ module.exports.getDepartmentWiseRanking = async (req, res) => {
       ["_id", "department", "fullName"]
     );
     console.log("Users: ", users);
-    var flag = 0;
+    var flag = 0,
+      updatedUsers;
     const Promises = users.map(async (us) => {
-      const userHabbit = await userHabbitService.find({
-        user: { $eq: us._id },
-        date: { $lte: currentDate, $gte: req.body.startDate },
-        department: { $eq: us.department },
-        state: { $eq: "done" },
-      });
-      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
-      var pair = { score: userHabbit.length };
-      users[flag] = { ...users[flag], ...pair };
-      console.log("User score added: ", users[flag]);
       flag++;
+      updatedUsers = await departmentWiseIteration(
+        flag,
+        us._id,
+        currentDate,
+        req.body.startDate,
+        us.department,
+        users
+      );
     });
 
     await Promise.all(Promises);
-    console.log("New Users: ", users);
-    return res.status(200).send(users);
+    console.log("New Users: ", updatedUsers);
+    return res.status(200).send(updatedUsers);
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
   }
 };
+
+const companyDepartmentsIteration = (
+  index,
+  departmentId,
+  currentDate,
+  startDate,
+  company
+) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const userHabbit = await userHabbitService.find({
+        department: { $eq: departmentId },
+        date: { $lte: currentDate, $gte: startDate },
+        state: { $eq: "done" },
+      });
+      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
+      var pair = { score: userHabbit.length };
+      company.departments[index - 1] = {
+        ...company.departments[index - 1],
+        ...pair,
+      };
+
+      console.log("Index", index - 1);
+      // index++;
+      resolve(company);
+    } catch (error) {
+      reject(error);
+    }
+  });
 
 // All me departments rank hon ge -> ALL
 module.exports.getCompanyDepartmentsRanking = async (req, res) => {
@@ -204,24 +259,32 @@ module.exports.getCompanyDepartmentsRanking = async (req, res) => {
       ["_id", "departments", "companyName"]
     );
     console.log("company: ", company);
-    var flag = 0;
+    var flag = 0,
+      updatedCompany;
     const arr = company.departments;
     const Promises = arr.map(async (us) => {
-      const userHabbit = await userHabbitService.find({
-        department: { $eq: us._id },
-        date: { $lte: currentDate, $gte: req.body.startDate },
-        state: { $eq: "done" },
-      });
-      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
-      var pair = { score: userHabbit.length };
-      company.departments[flag] = { ...company.departments[flag], ...pair };
-      console.log("User score added: ", company.departments[flag]);
+      // const userHabbit = await userHabbitService.find({
+      //   department: { $eq: us._id },
+      //   date: { $lte: currentDate, $gte: req.body.startDate },
+      //   state: { $eq: "done" },
+      // });
+      // console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
+      // var pair = { score: userHabbit.length };
+      // company.departments[flag] = { ...company.departments[flag], ...pair };
+      // console.log("User score added: ", company.departments[flag]);
       flag++;
+      updatedCompany = await companyDepartmentsIteration(
+        flag,
+        us._id,
+        currentDate,
+        req.body.startDate,
+        company
+      );
     });
 
     await Promise.all(Promises);
-    console.log("New company: ", company);
-    return res.status(200).send(company);
+    console.log("New company: ", updatedCompany);
+    return res.status(200).send(updatedCompany);
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
