@@ -113,9 +113,26 @@ const individualIteration = (
 
 // Get Individual Score -> Individual
 module.exports.getIndividualRanking = async (req, res) => {
+  var theStart, theEnd;
+  if (req.body.monthName) {
+    const nameMonth = moment()
+      .month(req.body.monthName)
+      .format("YYYY-MM-DD");
+    theStart = moment(nameMonth)
+      .startOf("month")
+      .format("YYYY-MM-DD");
+
+    theEnd = moment(theStart)
+      .add(29, "days")
+      .format("YYYY-MM-DD");
+  } else if (req.body.startDate) {
+    theEnd = moment().format("YYYY-MM-DD"); //Current Date
+    theStart = req.body.startDate;
+  }
+
   console.log("Company Id: ", req.body.companyId);
   console.log("Start Date: ", req.body.startDate); //Challange start
-  var currentDate = moment().format("YYYY-MM-DD");
+  // var currentDate = moment().format("YYYY-MM-DD");
   try {
     var users = await userService.findAndSelect(
       { company: req.body.companyId },
@@ -140,8 +157,8 @@ module.exports.getIndividualRanking = async (req, res) => {
       updatedUsers = await individualIteration(
         flag,
         us._id,
-        currentDate,
-        req.body.startDate,
+        theEnd,
+        theStart,
         us.company,
         users
       );
@@ -149,6 +166,8 @@ module.exports.getIndividualRanking = async (req, res) => {
 
     await Promise.all(Promises);
     console.log("New Users: ", updatedUsers);
+    console.log("theStart: ", theStart);
+    console.log("theEnd: ", theEnd);
 
     return res.status(200).send(updatedUsers);
   } catch (e) {
@@ -222,15 +241,15 @@ module.exports.getDepartmentWiseRanking = async (req, res) => {
 const companyDepartmentsIteration = (
   index,
   departmentId,
-  currentDate,
-  startDate,
+  theEnd,
+  theStart,
   company
 ) =>
   new Promise(async (resolve, reject) => {
     try {
       const userHabbit = await userHabbitService.find({
         department: { $eq: departmentId },
-        date: { $lte: currentDate, $gte: startDate },
+        date: { $lte: theEnd, $gte: theStart },
         state: { $eq: "done" },
       });
       console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
@@ -250,9 +269,23 @@ const companyDepartmentsIteration = (
 
 // All me departments rank hon ge -> ALL
 module.exports.getCompanyDepartmentsRanking = async (req, res) => {
-  console.log("Company Id: ", req.body.companyId);
-  console.log("Date: ", req.body.startDate);
-  var currentDate = moment().format("YYYY-MM-DD");
+  var theStart, theEnd;
+  if (req.body.monthName) {
+    const nameMonth = moment()
+      .month(req.body.monthName)
+      .format("YYYY-MM-DD");
+    theStart = moment(nameMonth)
+      .startOf("month")
+      .format("YYYY-MM-DD");
+
+    theEnd = moment(theStart)
+      .add(29, "days")
+      .format("YYYY-MM-DD");
+  } else if (req.body.startDate) {
+    theEnd = moment().format("YYYY-MM-DD"); //Current Date
+    theStart = req.body.startDate;
+  }
+
   try {
     var company = await companyService.findOneAndSelect(
       { _id: req.body.companyId },
@@ -276,14 +309,17 @@ module.exports.getCompanyDepartmentsRanking = async (req, res) => {
       updatedCompany = await companyDepartmentsIteration(
         flag,
         us._id,
-        currentDate,
-        req.body.startDate,
+        theEnd,
+        theStart,
         company
       );
     });
 
     await Promise.all(Promises);
     console.log("New company: ", updatedCompany);
+    console.log(theEnd);
+    console.log(theStart);
+    // console.log(monthEnd);
     return res.status(200).send(updatedCompany);
   } catch (e) {
     console.log(e);

@@ -10,6 +10,69 @@ const companyService = require("../../models/company/companyService");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 const userService = require("../../models/user/userService");
 
+const iteration = (
+  index,
+  user,
+  habbitId,
+  date,
+  challange,
+  weekStart,
+  weekEnd
+) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const userHabbit = await userHabbitService.find({
+        user: { $eq: user }, //req.body.user
+        habbit: { $eq: habbitId },
+        date: { $gte: weekStart, $lte: weekEnd },
+      });
+      console.log("User Habbit: ", userHabbit);
+      var pair = [];
+      const datePromise = userHabbit.map((hab) => {
+        const dateFormatted = moment(hab.date).format("YYYY-MM-DD");
+        pair.push(dateFormatted);
+      });
+
+      var newPairArray = [];
+
+      for (var i = 0; i < 7; i++) {
+        const onlyDate = moment(weekStart)
+          .add(i, "days")
+          .format("YYYY-MM-DD");
+        console.log("Only Date:", onlyDate);
+        if (pair.includes(onlyDate)) {
+          var newPair = { weekDay: "done" };
+          newPairArray.push(newPair);
+        } else {
+          var newPair = { weekDay: "notDone" };
+          newPairArray.push(newPair);
+        }
+      }
+
+      console.log("NewPair Array: ", newPairArray);
+      await Promise.all(datePromise);
+      console.log("HAB DATE: ", newPairArray);
+      // var pair;
+      // if (!userHabbit) {
+      //   pair = { state: "notDone" };
+      // } else {
+      //   pair = { state: userHabbit.state };
+      // }
+
+      challange.habbits[index - 1] = {
+        ...challange.habbits[index - 1],
+        ...{ dates: newPairArray, doneOrNot: pair },
+      };
+      //console.log("NewChallange", challange.habbits[index]);
+
+      console.log("Index", index - 1);
+      // index++;
+      resolve(challange);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
 //Get HabbitWise Score -> Habit
 module.exports.getHabbitWiseRanking = async (req, res) => {
   console.log("Company Id: ", req.body.companyId);

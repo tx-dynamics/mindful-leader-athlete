@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import DashboardService from "../services/DashboardService";
 import _ from "lodash";
-function GetVerticalChart({ companyId }) {
+
+function CompanyDepChart({ companyId, month }) {
   const [clickedDataset, setClickedDataset] = useState("");
   const [clickedElement, setClickedElement] = useState("");
   const [clickedElements, setClickedElements] = useState("");
@@ -22,10 +23,11 @@ function GetVerticalChart({ companyId }) {
     console.log("NEW Date: ", date);
     DashboardService.companyDepartments({
       companyId: companyId,
+      monthName: month,
       startDate: date,
     })
       .then((res) => {
-        console.log("Res: ", res);
+        console.log("Graph Res: ", res);
         setCompanyData(res);
         setCompanyName(res.companyName);
         const dep = res.departments;
@@ -37,14 +39,14 @@ function GetVerticalChart({ companyId }) {
         console.log("scoreResult: ", scoreResult);
       })
       .catch((err) => console.log("Error: ", err));
-  }, []);
+  }, [month]);
 
   const data = {
     labels: pods,
     datasets: [
       {
         label: companyName,
-        data: [10, 12, 8],
+        data: score,
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(54, 162, 235, 0.2)",
@@ -108,4 +110,4 @@ function GetVerticalChart({ companyId }) {
   );
 }
 
-export default GetVerticalChart;
+export default CompanyDepChart;
