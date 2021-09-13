@@ -4,7 +4,7 @@ const _ = require("lodash");
 const jwt = require("jsonwebtoken");
 var bcrypt = require("bcryptjs");
 const config = require("config");
-
+const { User } = require("../../models/user/userSchema");
 const userService = require("../../models/user/userService");
 const companyService = require("../../models/company/companyService");
 const adminService = require("../../models/admin/adminService");
@@ -240,14 +240,24 @@ module.exports.editBirthday = async (req, res) => {
 
 module.exports.editProfileImage = async (req, res) => {
   try {
-    console.log("Edit Image: ", req.body.profileImage);
-    let user = await userService.findById(req.params.id);
-    user.profileImage = req.body.profileImage;
-    console.log("Edit Image: ", user);
-    user = await userService.save(user);
-    user = _.omit(user, "password");
-    user = JSON.parse(JSON.stringify(user));
-    return res.status(200).send(user);
+    // console.log("Edit Image: ", req.body.profileImage);
+    // let user = await userService.findById(req.params.id);
+    // user.profileImage = req.body.profileImage;
+    // console.log("Edit Image: ", user);
+    // user = await userService.save(user);
+    // user = _.omit(user, "password");
+    // let user = new User();
+    let user = await userService.findByIdAndUpdate(
+      { _id: req.params.id },
+      { $set: { profileImage: req.body.profileImage } }
+    );
+    console.log("User: ", user);
+    let newUser = await userService.findById(req.params.id);
+    console.log("New User: ", newUser);
+    // user = _.omit(user, "password");
+    return res.status(200).send(newUser);
+    // user = JSON.parse(JSON.stringify(user));
+    // return res.status(200).send(user);
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
