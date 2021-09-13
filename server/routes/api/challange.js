@@ -9,6 +9,7 @@ const challangeService = require("../../models/challange/challangeService");
 const companyService = require("../../models/company/companyService");
 const { Challange } = require("../../models/challange/challangeSchema");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
+const specialHabbitService = require("../../models/specialHabbit/specialHabbitService");
 
 const todayIteration = (index, user, habbitId, date, challange) =>
   new Promise(async (resolve, reject) => {
@@ -215,6 +216,12 @@ module.exports.getDateWiseChallange = async (req, res) => {
       company: { $eq: req.body.companyId },
     });
     if (!challange) return res.status(200).send({ msg: "No challange found" });
+    // var challange = await specialHabbitService.findOne({
+    //   startDate: { $lte: currentDate },
+    //   expiryDate: { $gte: currentDate },
+    //   company: { $eq: req.body.companyId },
+    //   user: { $eq: req.body.userId },
+    // });
     // console.log("challange res: ", challange);
     // console.log("challange habbits: ", challange.habbits);
 

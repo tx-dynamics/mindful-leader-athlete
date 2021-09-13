@@ -12,6 +12,7 @@ const modelSchema = new mongoose.Schema(
       ref: "User",
     },
     userName: String,
+    profileImage: String,
     date: String,
     time: String,
   },
