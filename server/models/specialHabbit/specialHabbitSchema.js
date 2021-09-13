@@ -12,8 +12,8 @@ const modelSchema = new mongoose.Schema(
     department: String,
     company: String,
     challange: String,
-    startDate: String,
-    expiryDate: String,
+    startDate: Date,
+    expiryDate: Date,
     //   expiryDate: Date,
   },
   { timestamps: true }

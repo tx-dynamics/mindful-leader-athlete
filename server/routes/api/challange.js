@@ -89,7 +89,7 @@ const iteration = (
         habbit: { $eq: habbitId },
         date: { $gte: weekStart, $lte: weekEnd },
       });
-      console.log("User Habbit: ", userHabbit);
+      // console.log("User Habbit: ", userHabbit);
       var pair = [];
       const datePromise = userHabbit.map((hab) => {
         const dateFormatted = moment(hab.date).format("YYYY-MM-DD");
@@ -102,7 +102,7 @@ const iteration = (
         const onlyDate = moment(weekStart)
           .add(i, "days")
           .format("YYYY-MM-DD");
-        console.log("Only Date:", onlyDate);
+        // console.log("Only Date:", onlyDate);
         if (pair.includes(onlyDate)) {
           var newPair = { weekDay: "done" };
           newPairArray.push(newPair);
@@ -112,9 +112,9 @@ const iteration = (
         }
       }
 
-      console.log("NewPair Array: ", newPairArray);
+      // console.log("NewPair Array: ", newPairArray);
       await Promise.all(datePromise);
-      console.log("HAB DATE: ", newPairArray);
+      // console.log("HAB DATE: ", newPairArray);
       // var pair;
       // if (!userHabbit) {
       //   pair = { state: "notDone" };
@@ -144,7 +144,7 @@ const checkHabbitState = (challange, user, date, weekStart, weekEnd) =>
       // var stateArr = [];
       var habbits = challange.habbits;
       const Promises = habbits.map(async (habbit) => {
-        console.log("Habb: ", habbit);
+        // console.log("Habb: ", habbit);
         flag++;
         updatedChallage = await iteration(
           flag,
@@ -216,13 +216,29 @@ module.exports.getDateWiseChallange = async (req, res) => {
       company: { $eq: req.body.companyId },
     });
     if (!challange) return res.status(200).send({ msg: "No challange found" });
-    // var challange = await specialHabbitService.findOne({
-    //   startDate: { $lte: currentDate },
-    //   expiryDate: { $gte: currentDate },
-    //   company: { $eq: req.body.companyId },
-    //   user: { $eq: req.body.userId },
-    // });
-    // console.log("challange res: ", challange);
+    console.log(
+      challange.expiryDate,
+      req.body.companyId,
+      req.body.userId,
+      challange._id
+    );
+    var specialHabbits = await specialHabbitService.findAndSelect(
+      {
+        expiryDate: { $eq: challange.expiryDate },
+        company: { $eq: req.body.companyId },
+        user: { $eq: req.body.userId },
+        challange: { $eq: challange._id },
+      },
+      ["habbitTitle", "habbitDescription"]
+    );
+    // console.log("specialHabbit: ", specialHabbitService);
+    // console.log("challange: ", challange);
+    if (specialHabbits) {
+      const newHabbits = [...challange.habbits, ...specialHabbits];
+      challange.habbits = newHabbits;
+    }
+    console.log("challange: ", challange);
+    // challange = {...challange.habbits, }
     // console.log("challange habbits: ", challange.habbits);
 
     var updatedChallage = await checkHabbitState(
@@ -237,7 +253,7 @@ module.exports.getDateWiseChallange = async (req, res) => {
       ...{ weekStart: weekStart },
       ...{ weekEnd: weekEnd },
     };
-    console.log("updated challange res: ", updatedChallage);
+    // console.log("updated challange res: ", updatedChallage);
     return res.status(200).send(updatedChallage);
   } catch (e) {
     console.log(e);
