@@ -247,13 +247,14 @@ module.exports.editProfileImage = async (req, res) => {
     // user = await userService.save(user);
     // user = _.omit(user, "password");
     // let user = new User();
+    console.log("Profile Image: ", req.body.profileImage);
     let user = await userService.findByIdAndUpdate(
       { _id: req.params.id },
       { $set: { profileImage: req.body.profileImage } }
     );
-    console.log("User: ", user);
+    // console.log("User: ", user);
     let newUser = await userService.findById(req.params.id);
-    console.log("New User: ", newUser);
+    // console.log("New User: ", newUser);
     // user = _.omit(user, "password");
     return res.status(200).send(newUser);
     // user = JSON.parse(JSON.stringify(user));

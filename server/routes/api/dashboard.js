@@ -49,7 +49,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
       },
       ["_id", "habbits", "challangeTitle"]
     );
-    console.log("Challange: ", challange);
+    // console.log("Challange: ", challange);
 
     var flag = 0,
       updatedChallage;
@@ -67,7 +67,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
     });
 
     await Promise.all(Promises);
-    console.log("New challange: ", updatedChallage);
+    // console.log("New challange: ", updatedChallage);
     return res.status(200).send(updatedChallage);
   } catch (e) {
     console.log(e);

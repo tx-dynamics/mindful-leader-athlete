@@ -11,5 +11,5 @@ Get Company Departments Ranking -> All
 Get HabbitWise Score -> Habit 
 
 add department k response mein user araha usy use krein for further requests
-
+Habits: This should show the invidual ranking per habit.
 
