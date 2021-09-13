@@ -10,25 +10,85 @@ const companyService = require("../../models/company/companyService");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 const userService = require("../../models/user/userService");
 
-const habbitWiseIteration = (index, habbitId, companyId, challange) =>
+const habbitWiseAnotherIteration = (
+  index,
+  habbitId,
+  companyId,
+  userId,
+  users
+) =>
   new Promise(async (resolve, reject) => {
     try {
+      console.log("User Id: ", userId, "Habbit Id: ", habbitId);
       const userHabbit = await userHabbitService.find({
         habbit: { $eq: habbitId },
         company: { $eq: companyId },
+        user: { $eq: userId },
         state: { $eq: "done" },
       });
-      console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
+      // console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
       var pair = { score: userHabbit.length };
       // challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
       //console.log("User score added: ", challange.habbits[flag]);
-      challange.habbits[index - 1] = {
-        ...challange.habbits[index - 1],
+      users[index] = {
+        ...users[index],
         ...pair,
       };
       //console.log("NewChallange", challange.habbits[index]);
 
-      console.log("Index", index - 1);
+      console.log("Index", index);
+      // index++;
+      resolve(users);
+    } catch (error) {
+      reject(error);
+    }
+  });
+
+const habbitWiseIteration = (index, habbitId, companyId, challange, users) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      var updatedUsers = [],
+        totalScore = 0;
+      // flag = 0,
+
+      // const Promises = users.map(async (user) => {
+      //   console.log("User Inside habbit: ", user);
+      //   flag++;
+      for (var flag = 0; flag < users.length; flag++) {
+        updatedUsers = await habbitWiseAnotherIteration(
+          flag,
+          habbitId,
+          companyId,
+          users[flag]._id,
+          users
+        );
+      }
+      for (var flag = 0; flag < users.length; flag++) {
+        totalScore += updatedUsers[flag].score;
+      }
+      // });
+      // console.log(
+      //   "Updated Users",
+      //   updatedUsers,
+      //   "Length: ",
+      //   updatedUsers.length,
+      //   "Total Score: ",
+      //   totalScore
+      // );
+
+      var pair = { habbitUsers: updatedUsers };
+      var totalUsersPair = { totalUsers: updatedUsers.length };
+      var totalScorePair = { totalScore: totalScore };
+      // challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
+      // console.log("Challange: ", challange.habbits);
+      challange.habbits[index] = {
+        ...challange.habbits[index],
+        ...pair,
+        // ...totalUsersPair,
+        // ...totalScorePair,
+      };
+      // console.log("Challange: ", challange.habbits);
+      // await Promise.all(Promises);
       // index++;
       resolve(challange);
     } catch (error) {
@@ -41,7 +101,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
   console.log("Company Id: ", req.body.companyId);
   var currentDate = moment().format("YYYY-MM-DD");
   try {
-    const challange = await challangeService.findOneAndSelect(
+    var challange = await challangeService.findOneAndSelect(
       {
         startDate: { $lte: currentDate },
         expiryDate: { $gte: currentDate },
@@ -49,26 +109,40 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
       },
       ["_id", "habbits", "challangeTitle"]
     );
-    // console.log("Challange: ", challange);
-
-    var flag = 0,
-      updatedChallage;
+    var users = await userService.findAndSelect(
+      { company: req.body.companyId },
+      ["_id", "fullName", "company"]
+    );
+    console.log("Challange: ", challange);
+    console.log("users: ", users);
+    // flag = 0,
+    var updatedChallage;
     const arr = challange.habbits;
-
-    const Promises = arr.map(async (us) => {
-      console.log("Habb: ", us);
-      flag++;
-      updatedChallage = await habbitWiseIteration(
-        flag,
-        us._id,
-        req.body.companyId,
-        challange
+    console.log("habbits length: ", arr.length);
+    // const Promises = arr.map(async (us) => {
+    for (var flag = 0; flag < arr.length; flag++) {
+      console.log(
+        "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooop: ",
+        flag
       );
-    });
+      console.log("UpdatedChallage: ", challange.habbits);
+      challange = await habbitWiseIteration(
+        flag,
+        challange.habbits[flag]._id,
+        req.body.companyId,
+        challange,
+        users
+      );
+      console.log("UpdatedChallage: ", challange.habbits);
+    }
+    // console.log("Habb: ", us);
+    // flag++;
 
-    await Promise.all(Promises);
+    // });
+
+    // await Promise.all(Promises);
     // console.log("New challange: ", updatedChallage);
-    return res.status(200).send(updatedChallage);
+    return res.status(200).send(challange);
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
