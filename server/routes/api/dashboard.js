@@ -125,7 +125,8 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
         "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooop: ",
         flag
       );
-      console.log("UpdatedChallage: ", challange.habbits);
+
+      console.log("Challage: ", challange.habbits[flag]);
       challange = await habbitWiseIteration(
         flag,
         challange.habbits[flag]._id,
@@ -133,7 +134,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
         challange,
         users
       );
-      console.log("UpdatedChallage: ", challange.habbits);
+      console.log("UpdatedChallage: ", challange);
     }
     // console.log("Habb: ", us);
     // flag++;

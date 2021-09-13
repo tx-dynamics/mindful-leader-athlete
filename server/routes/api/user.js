@@ -26,6 +26,7 @@ module.exports.signUp = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     user.company = company._id;
+    user.profileImage = "";
     user = await userService.save(user);
 
     const token = jwt.sign(

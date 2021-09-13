@@ -79,15 +79,18 @@ io.on("connect", (socket) => {
       _id: socket.userId,
       $or: [{ company: socket.roomId }, { department: socket.roomId }],
     });
+
     console.log("User: ", user);
 
     var currentDate = moment().format("YYYY-MM-DD");
     var currentTime = moment().format("HH:mm:ss");
+
     const msg = await messageService.save({
       text,
       roomId: socket.roomId,
       user: user._id,
       userName: user.fullName,
+      profileImage: user.profileImage,
       date: currentDate,
       time: currentTime,
     });
