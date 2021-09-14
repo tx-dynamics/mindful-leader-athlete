@@ -80,6 +80,13 @@ const habbitWiseIteration = (index, habbitId, companyId, challange, users) =>
       var pair = { habbitUsers: updatedUsers };
       var totalUsersPair = { totalUsers: updatedUsers.length };
       var totalScorePair = { totalScore: totalScore };
+      // console.log("Updated Users: ", updatedUsers);
+      const prom = await updatedUsers.sort(
+        (a, b) => parseFloat(b.price) - parseFloat(a.price)
+      );
+
+      await Promise.all(prom);
+      // console.log("Updated Users sort: ", updatedUsers);
       // challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
       // console.log("Challange: ", challange.habbits);
       // challange.habbits[index] = {
@@ -122,8 +129,9 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
     const arr = challange.habbits;
     const newHabbits = challange.habbits;
     console.log("habbits length: ", arr.length);
-    console.log("newHabbits: ", newHabbits);
+    // console.log("newHabbits: ", newHabbits);
 
+    var usersArray = [];
     // const Promises = arr.map(async (us) => {
     for (var flag = 0; flag < arr.length; flag++) {
       console.log(
@@ -143,11 +151,12 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
         users
       );
 
+      usersArray.push(pair);
       const add = { updatedusers: pair };
-      challange.habbits[flag] = await {
-        ...challange.habbits[flag],
-        ...pair,
-      };
+      // challange.habbits[flag] = await {
+      //   ...challange.habbits[flag],
+      //   ...pair,
+      // };
       // const newHabb = newHabbits[flag];
 
       // console.log("pair: ", newHabb);
@@ -156,12 +165,13 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
       // console.log("Loop: ", flag);
       // console.log("pair: ", pair);
     }
-    for (var j = 0; j < 5; j++) {
-      console.log("newHabbits: ", j, newHabbits[j]);
-    }
+    // for (var j = 0; j < 5; j++) {
+    //   console.log("newHabbits: ", j, newHabbits[j]);
+    // }
+    console.log("usersArray: ", usersArray);
     // await Promise.all(Promises);
     console.log("New challange: ", challange);
-    return res.status(200).send(challange);
+    return res.status(200).send({ challange, usersArray });
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });
