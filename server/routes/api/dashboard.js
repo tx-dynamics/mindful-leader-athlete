@@ -68,14 +68,14 @@ const habbitWiseIteration = (index, habbitId, companyId, challange, users) =>
         totalScore += updatedUsers[flag].score;
       }
       // });
-      // console.log(
-      //   "Updated Users",
-      //   updatedUsers,
-      //   "Length: ",
-      //   updatedUsers.length,
-      //   "Total Score: ",
-      //   totalScore
-      // );
+      console.log(
+        // "Updated Users",
+        // updatedUsers,
+        "Length: ",
+        updatedUsers.length,
+        "Total Score: ",
+        totalScore
+      );
 
       var pair = { habbitUsers: updatedUsers };
       var totalUsersPair = { totalUsers: updatedUsers.length };
@@ -142,28 +142,25 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
         challange,
         users
       );
-      const add = { updatedusers: pair };
 
-      const newHabb = newHabbits[flag];
-      Object.entries(add).forEach(([key, value]) => {
-        newHabb[key] = value;
-      });
-      console.log("pair: ", newHabb);
-      newHabbits[flag] = newHabb;
+      const add = { updatedusers: pair };
+      challange.habbits[flag] = await {
+        ...challange.habbits[flag],
+        ...pair,
+      };
+      // const newHabb = newHabbits[flag];
+
+      // console.log("pair: ", newHabb);
+      // newHabbits[flag] = newHabb;
       // newHabbits[flag].updatedUsers = pair;
-      console.log("Loop: ", flag);
+      // console.log("Loop: ", flag);
       // console.log("pair: ", pair);
     }
     for (var j = 0; j < 5; j++) {
       console.log("newHabbits: ", j, newHabbits[j]);
     }
-    // console.log("newHabbits: ", newHabbits.habbitUsers);
-    // flag++;
-
-    // });
-
     // await Promise.all(Promises);
-    // console.log("New challange: ", updatedChallage);
+    console.log("New challange: ", challange);
     return res.status(200).send(challange);
   } catch (e) {
     console.log(e);
