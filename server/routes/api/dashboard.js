@@ -82,11 +82,14 @@ const habbitWiseIteration = (index, habbitId, companyId, challange, users) =>
       var totalScorePair = { totalScore: totalScore };
       // console.log("Updated Users: ", updatedUsers);
       const prom = await updatedUsers.sort(
-        (a, b) => parseFloat(b.price) - parseFloat(a.price)
+        (a, b) => Number(b.score) - Number(a.score)
       );
 
+      // console.log("Prom: ", prom);
       await Promise.all(prom);
       // console.log("Updated Users sort: ", updatedUsers);
+      const sliceUsers = await updatedUsers.slice(0, 3);
+      console.log("slice Users : ", sliceUsers);
       // challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
       // console.log("Challange: ", challange.habbits);
       // challange.habbits[index] = {
@@ -99,11 +102,20 @@ const habbitWiseIteration = (index, habbitId, companyId, challange, users) =>
       // console.log("Challange: ", challange.habbits);
       // await Promise.all(Promises);
       // index++;
-      resolve(updatedUsers);
+      resolve(sliceUsers);
     } catch (error) {
       reject(error);
     }
   });
+function cloneMessage(servermessage) {
+  var clone = {};
+  for (var key in servermessage) {
+    if (servermessage.hasOwnProperty(key))
+      //ensure not adding inherited props
+      clone[key] = servermessage[key];
+  }
+  return clone;
+}
 
 //Get HabbitWise Score -> Habit
 module.exports.getHabbitWiseRanking = async (req, res) => {
@@ -120,7 +132,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
     );
     var users = await userService.findAndSelect(
       { company: req.body.companyId },
-      ["_id", "fullName", "company"]
+      ["fullName"]
     );
     console.log("Challange: ", challange);
     console.log("users: ", users);
@@ -131,7 +143,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
     console.log("habbits length: ", arr.length);
     // console.log("newHabbits: ", newHabbits);
 
-    var usersArray = [];
+    let usersArray = [];
     // const Promises = arr.map(async (us) => {
     for (var flag = 0; flag < arr.length; flag++) {
       console.log(
@@ -151,7 +163,30 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
         users
       );
 
-      usersArray.push(pair);
+      // console.log("PAIR: ", pair);
+      // console.log("usersArray: ", usersArray);
+      usersArray = usersArray.concat(pair);
+      // console.log("arr2: ", arr2);
+      // usersArray = arr2;
+      // usersArray.push(arr2);
+      // const original = ['🦊'];
+      // let duplicate = [...usersArray, pair];
+
+      // duplicate.slice(pair);
+
+      //  usersArray.concat(pair);
+
+      // let duplicate = [...usersArray];
+      // console.log("usersArray before: ", usersArray);
+      // console.log("Duplicate: ", duplicate);
+      // usersArray.push(pair);
+      // console.log("usersArray: ", usersArray);
+      // usersArray = duplicate;
+      // Result
+      // console.log(typeof pair);
+      // console.log("Pair: ", pair);
+      const newP = { assign: pair };
+      // usersArray.push(newP);
       const add = { updatedusers: pair };
       // challange.habbits[flag] = await {
       //   ...challange.habbits[flag],
@@ -169,8 +204,10 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
     //   console.log("newHabbits: ", j, newHabbits[j]);
     // }
     console.log("usersArray: ", usersArray);
+    console.log("usersArray: ", usersArray.length);
+
     // await Promise.all(Promises);
-    console.log("New challange: ", challange);
+    // console.log("New challange: ", challange);
     return res.status(200).send({ challange, usersArray });
   } catch (e) {
     console.log(e);
