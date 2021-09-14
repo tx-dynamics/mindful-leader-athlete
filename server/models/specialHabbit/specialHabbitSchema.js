@@ -14,6 +14,7 @@ const modelSchema = new mongoose.Schema(
     challange: String,
     startDate: Date,
     expiryDate: Date,
+    special: Boolean,
     //   expiryDate: Date,
   },
   { timestamps: true }

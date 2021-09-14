@@ -229,7 +229,7 @@ module.exports.getDateWiseChallange = async (req, res) => {
         user: { $eq: req.body.userId },
         challange: { $eq: challange._id },
       },
-      ["habbitTitle", "habbitDescription"]
+      ["habbitTitle", "habbitDescription", "special"]
     );
     // console.log("specialHabbit: ", specialHabbitService);
     // console.log("challange: ", challange);
@@ -397,7 +397,7 @@ module.exports.createChallange = async (req, res) => {
 };
 
 module.exports.completeHabbit = async (req, res) => {
-  //User Id, Habbit ID, Date//{user, habbit, date(conditional), department, company}
+  //User Id, Habbit ID, Date//{user, habbit, date(conditional), department, company, special}
   console.log("completeHabbit", req.body);
   var currentDate = moment().format("YYYY-MM-DD");
   try {

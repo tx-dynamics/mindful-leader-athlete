@@ -12,6 +12,7 @@ const modelSchema = new mongoose.Schema(
     state: { type: String, default: "done" },
     department: String,
     company: String,
+    special: Boolean,
     //   expiryDate: Date,
   },
   { timestamps: true }

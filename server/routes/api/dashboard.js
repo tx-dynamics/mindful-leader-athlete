@@ -25,6 +25,7 @@ const habbitWiseAnotherIteration = (
         company: { $eq: companyId },
         user: { $eq: userId },
         state: { $eq: "done" },
+        special: { $eq: "false" },
       });
       // console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
       var pair = { score: userHabbit.length };
@@ -81,16 +82,17 @@ const habbitWiseIteration = (index, habbitId, companyId, challange, users) =>
       var totalScorePair = { totalScore: totalScore };
       // challange.habbits[flag] = { ...challange.habbits[flag], ...pair };
       // console.log("Challange: ", challange.habbits);
-      challange.habbits[index] = {
-        ...challange.habbits[index],
-        ...pair,
-        // ...totalUsersPair,
-        // ...totalScorePair,
-      };
+      // challange.habbits[index] = {
+      //   ...challange.habbits[index],
+      //   ...pair,
+      // };
+      // ...totalUsersPair,
+      // ...totalScorePair,
+
       // console.log("Challange: ", challange.habbits);
       // await Promise.all(Promises);
       // index++;
-      resolve(challange);
+      resolve(updatedUsers);
     } catch (error) {
       reject(error);
     }
@@ -118,7 +120,10 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
     // flag = 0,
     var updatedChallage;
     const arr = challange.habbits;
+    const newHabbits = challange.habbits;
     console.log("habbits length: ", arr.length);
+    console.log("newHabbits: ", newHabbits);
+
     // const Promises = arr.map(async (us) => {
     for (var flag = 0; flag < arr.length; flag++) {
       console.log(
@@ -126,17 +131,33 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
         flag
       );
 
-      console.log("Challage: ", challange.habbits[flag]);
-      challange = await habbitWiseIteration(
+      // for (var j = 1; j < flag; j++) {
+      //   console.log("Habbit: ", j, challange.habbits[j].habbitUsers);
+      // }
+
+      const pair = await habbitWiseIteration(
         flag,
         challange.habbits[flag]._id,
         req.body.companyId,
         challange,
         users
       );
-      console.log("UpdatedChallage: ", challange);
+      const add = { updatedusers: pair };
+
+      const newHabb = newHabbits[flag];
+      Object.entries(add).forEach(([key, value]) => {
+        newHabb[key] = value;
+      });
+      console.log("pair: ", newHabb);
+      newHabbits[flag] = newHabb;
+      // newHabbits[flag].updatedUsers = pair;
+      console.log("Loop: ", flag);
+      // console.log("pair: ", pair);
     }
-    // console.log("Habb: ", us);
+    for (var j = 0; j < 5; j++) {
+      console.log("newHabbits: ", j, newHabbits[j]);
+    }
+    // console.log("newHabbits: ", newHabbits.habbitUsers);
     // flag++;
 
     // });
@@ -165,6 +186,7 @@ const individualIteration = (
         date: { $lte: currentDate, $gte: startDate },
         company: { $eq: companyId },
         state: { $eq: "done" },
+        special: { $eq: "false" },
       });
       console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
       var pair = { score: userHabbit.length };
@@ -223,6 +245,7 @@ module.exports.getIndividualRanking = async (req, res) => {
       //   date: { $lte: currentDate, $gte: req.body.startDate },
       //   company: { $eq: us.company },
       //   state: { $eq: "done" },
+      // special:{ $eq: "false"}
       // });
       // console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
       // var pair = { score: userHabbit.length };
@@ -266,6 +289,7 @@ const departmentWiseIteration = (
         date: { $lte: currentDate, $gte: startDate },
         department: { $eq: departmentId },
         state: { $eq: "done" },
+        special: { $eq: "false" },
       });
       console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
       var pair = { score: userHabbit.length };
@@ -326,6 +350,7 @@ const companyDepartmentsIteration = (
         department: { $eq: departmentId },
         date: { $lte: theEnd, $gte: theStart },
         state: { $eq: "done" },
+        special: { $eq: "false" },
       });
       console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
       var pair = { score: userHabbit.length };
@@ -375,6 +400,7 @@ module.exports.getCompanyDepartmentsRanking = async (req, res) => {
       //   department: { $eq: us._id },
       //   date: { $lte: currentDate, $gte: req.body.startDate },
       //   state: { $eq: "done" },
+      // special:{ $eq: "false"}
       // });
       // console.log("User Habbit", userHabbit, "Length: ", userHabbit.length);
       // var pair = { score: userHabbit.length };

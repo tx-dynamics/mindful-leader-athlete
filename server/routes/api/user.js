@@ -8,6 +8,7 @@ const { User } = require("../../models/user/userSchema");
 const userService = require("../../models/user/userService");
 const companyService = require("../../models/company/companyService");
 const adminService = require("../../models/admin/adminService");
+const userHabbitService = require("../../models/UserHabbit/userHabbitService");
 
 module.exports.signUp = async (req, res) => {
   // var name = req.body.email.substring(0, req.body.email.lastIndexOf("@"));
@@ -225,14 +226,22 @@ module.exports.editGender = async (req, res) => {
 
 module.exports.editBirthday = async (req, res) => {
   try {
-    console.log("Edit Birthday: ", req.body.birthday);
-    let user = await userService.findById(req.params.id);
-    user.birthday = req.body.birthday;
-    console.log("Edit Birthday: ", user);
-    user = await userService.save(user);
-    user = _.omit(user, "password");
-    user = JSON.parse(JSON.stringify(user));
-    return res.status(200).send(user);
+    // console.log("Edit Birthday: ", req.body.birthday);
+    // let user = await userService.findById(req.params.id);
+    // user.birthday = req.body.birthday;
+    // console.log("Edit Birthday: ", user);
+    // user = await userService.save(user);
+    // user = _.omit(user, "password");
+    // user = JSON.parse(JSON.stringify(user));
+    const userHabbitData = await userHabbitService.find({});
+    const promises = userHabbitData.map(async (userHabb) => {
+      await userHabbitService.findByIdAndUpdate(
+        { _id: userHabb._id },
+        { $set: { special: "false" } }
+      );
+    });
+    Promise.all(promises);
+    return res.status(200).send("Done");
   } catch (e) {
     console.log(e);
     return res.status(400).send({ error: e.message });

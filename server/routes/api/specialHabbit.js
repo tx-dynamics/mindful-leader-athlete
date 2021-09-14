@@ -18,6 +18,7 @@ module.exports.addSpecialHabbit = async (req, res) => {
     var currentDate = moment().format("YYYY-MM-DD");
     let data = req.body;
     data.startDate = currentDate;
+    data.special = true;
     specialHabbit = await specialHabbitService.save(data);
     return res.status(200).send(specialHabbit);
   } catch (e) {
