@@ -15,6 +15,7 @@ const modelSchema = new mongoose.Schema(
     profileImage: String,
     date: String,
     time: String,
+    type: String,
   },
   { timestamps: true }
 );
