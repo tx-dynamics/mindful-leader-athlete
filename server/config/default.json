@@ -1,6 +1,6 @@
 {
   "jwtPrivateKey": "habbitTrackingAppPrivateKey",
-  "db": "mongodb+srv://techxpert:techxpert123@cluster0.yv2lm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority",
+  "db": "mongodb+srv://mindful:mindful@cluster0.tl6aa.mongodb.net/mindfullLeaderAthlete?retryWrites=true&w=majority",
   "clientUrl":"http://localhost:3000"
 }
 
