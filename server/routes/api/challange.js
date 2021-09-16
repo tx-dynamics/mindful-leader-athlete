@@ -498,6 +498,7 @@ module.exports.createChallange = async (req, res) => {
 
     var challangeExist = await challangeService.findOne({
       expiryDate: { $gte: req.body.data.startDate },
+      startDate: { $lte: req.body.data.expiryDate },
       company: { $eq: company._id },
     });
     console.log("challangeExist: ", challangeExist);
