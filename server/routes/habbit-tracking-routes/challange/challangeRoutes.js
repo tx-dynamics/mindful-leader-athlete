@@ -6,6 +6,7 @@ const companyNameExist = require("../../../middlewares/company/companyNameExist"
 const dateRangeExist = require("../../../middlewares/challange/dateRangeExist");
 
 router.get("/:id", challange.getSingleChallange);
+router.post("/previousChallange", challange.getPreviousChallange);
 router.put("/:id", challange.updateChallange);
 router.post("/todays", challange.getTodaysChallange);
 router.post("/date", challange.getDateWiseChallange);

@@ -215,7 +215,8 @@ module.exports.getDateWiseChallange = async (req, res) => {
       expiryDate: { $gte: currentDate },
       company: { $eq: req.body.companyId },
     });
-    if (!challange) return res.status(200).send({ msg: "No challange found" });
+    if (!challange)
+      return res.status(200).send({ msg: "No challange found for today" });
     console.log(
       challange.expiryDate,
       req.body.companyId,
@@ -260,6 +261,94 @@ module.exports.getDateWiseChallange = async (req, res) => {
     return res.status(400).send({ error: e.message });
   }
 };
+
+module.exports.getPreviousChallange = async (req, res) => {
+  try {
+    var currentDate = moment().format("YYYY-MM-DD");
+    var challange = await Challange.find({
+      company: { $eq: req.body.companyId },
+      expiryDate: { $lt: currentDate },
+    })
+      .sort({ expiryDate: "descending" })
+      .lean();
+    var prevChallange = challange[0];
+
+    console.log("Prev Chall: ", prevChallange);
+    var currentDate = moment(prevChallange.expiryDate).format("YYYY-MM-DD");
+    const weekStart = moment(prevChallange.expiryDate)
+      .day("sunday")
+      .format("YYYY-MM-DD");
+    console.log(weekStart);
+    var weekEnd = moment(prevChallange.expiryDate)
+      .day("sunday")
+      .add(6, "days")
+      .format("YYYY-MM-DD");
+    console.log(weekEnd);
+
+    // console.log("Challanges: ", challange);
+    if (!challange)
+      return res.status(200).send({ msg: "No challange found in Database" });
+    console.log(
+      prevChallange.expiryDate,
+      req.body.companyId,
+      req.body.userId,
+      prevChallange._id
+    );
+    var specialHabbits = await specialHabbitService.findAndSelect(
+      {
+        expiryDate: { $eq: prevChallange.expiryDate },
+        company: { $eq: req.body.companyId },
+        user: { $eq: req.body.userId },
+        challange: { $eq: prevChallange._id },
+      },
+      ["habbitTitle", "habbitDescription", "special"]
+    );
+    // console.log("specialHabbit: ", specialHabbitService);
+    // console.log("challange: ", challange);
+    if (specialHabbits) {
+      const newHabbits = [...prevChallange.habbits, ...specialHabbits];
+      prevChallange.habbits = newHabbits;
+    }
+    console.log("challange: ", prevChallange);
+    // challange = {...challange.habbits, }
+    // console.log("challange habbits: ", challange.habbits);
+    var upComingChall = await Challange.find({
+      company: { $eq: req.body.companyId },
+      startDate: { $gt: currentDate },
+    })
+      .sort({ expiryDate: "ascending" })
+      .select(["startDate"])
+      .lean();
+
+    var upComingChallDate = moment(upComingChall[0].startDate).format(
+      "YYYY-MM-DD"
+    );
+    console.log("upComingChallDateDate: ", upComingChall, upComingChallDate);
+
+    var updatedChallage = await checkHabbitState(
+      prevChallange,
+      req.body.userId,
+      currentDate,
+      weekStart,
+      weekEnd
+    );
+    updatedChallage = {
+      ...updatedChallage,
+      ...{ weekStart: weekStart },
+      ...{ weekEnd: weekEnd },
+      ...{ upComingChallDate: upComingChallDate },
+    };
+
+    var currentDate = moment().format("YYYY-MM-DD");
+
+    console.log("updated challange res: ", updatedChallage);
+    return res.status(200).send(updatedChallage);
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
+};
+
 module.exports.getTomorrowsChallange = async (req, res) => {
   try {
     var tomorrow = moment()
