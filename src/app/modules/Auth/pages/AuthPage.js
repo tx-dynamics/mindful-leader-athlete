@@ -39,7 +39,7 @@ export function AuthPage() {
               {/* start:: Aside content */}
               <div className="flex-column-fluid d-flex flex-column justify-content-center">
                 <h3 className="font-size-h1 mb-5 text-white">
-                  Welcome to Mindful Leader Athlete!
+                  Welcome to Mindful Leader Athlete!!!
                 </h3>
                 {/* <p className="font-weight-lighter text-white opacity-80">
                   The ultimate Bootstrap & React 16 admin theme framework for
