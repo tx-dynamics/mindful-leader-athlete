@@ -10,7 +10,7 @@ export function login(email, password) {
   console.log("Login", email, password);
   // return axios.post(LOGIN_URL, { email, password });
   return axios.post(
-    "http://ec2-3-139-240-26.us-east-2.compute.amazonaws.com/api/user/admin/login",
+    "https://mindful-leader-athlete.herokuapp.com/api/user/admin/login",
     {
       email,
       password,

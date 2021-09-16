@@ -28,9 +28,7 @@ export default function mockAuth(mock) {
   //   return [400];
   // });
   mock
-    .onPost(
-      "http://ec2-3-139-240-26.us-east-2.compute.amazonaws.com/api/user/admin/login"
-    )
+    .onPost("https://mindful-leader-athlete.herokuapp.com/api/user/admin/login")
     .reply(async ({ data }) => {
       console.log("Data: ", data);
       const { email, password } = JSON.parse(data);
