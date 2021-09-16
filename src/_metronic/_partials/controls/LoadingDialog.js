@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from "react";
-import {Portal} from "react-portal";
+import React, { useEffect, useState } from "react";
+import { Portal } from "react-portal";
 
 const animationStartClass = "dialog-shown";
 const animationEndClass = "dialog-hidden";
@@ -7,7 +7,7 @@ const initCssClasses = [
   "dialog",
   "dialog-default",
   "dialog-loader",
-  "dialog-top-center"
+  "dialog-top-center",
 ];
 
 export function LoadingDialog({ isLoading, text }) {

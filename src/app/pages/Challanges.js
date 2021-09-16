@@ -150,9 +150,9 @@ export function Challanges(props) {
               return (
                 <MaterialTable
                   columns={[
-                    { title: "Habbit Title", field: "habbitTitle" },
+                    { title: "Habit Title", field: "habbitTitle" },
                     {
-                      title: "Habbit Description",
+                      title: "Habit Description",
                       field: "habbitDescription",
                     },
                   ]}
