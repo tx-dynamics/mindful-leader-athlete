@@ -501,6 +501,7 @@ module.exports.createChallange = async (req, res) => {
       startDate: { $lte: req.body.data.expiryDate },
       company: { $eq: company._id },
     });
+
     console.log("challangeExist: ", challangeExist);
     if (challangeExist)
       return res.status(400).send({
