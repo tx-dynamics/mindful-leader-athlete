@@ -107,15 +107,6 @@ const habbitWiseIteration = (index, habbitId, companyId, challange, users) =>
       reject(error);
     }
   });
-function cloneMessage(servermessage) {
-  var clone = {};
-  for (var key in servermessage) {
-    if (servermessage.hasOwnProperty(key))
-      //ensure not adding inherited props
-      clone[key] = servermessage[key];
-  }
-  return clone;
-}
 
 //Get HabbitWise Score -> Habit
 module.exports.getHabbitWiseRanking = async (req, res) => {
@@ -130,6 +121,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
       },
       ["_id", "habbits", "challangeTitle"]
     );
+    if (!challange) return res.status(400).send({ msg: "No challange found" });
     var users = await userService.findAndSelect(
       { company: req.body.companyId },
       ["fullName"]
@@ -146,15 +138,6 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
     let usersArray = [];
     // const Promises = arr.map(async (us) => {
     for (var flag = 0; flag < arr.length; flag++) {
-      console.log(
-        "Loooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooop: ",
-        flag
-      );
-
-      // for (var j = 1; j < flag; j++) {
-      //   console.log("Habbit: ", j, challange.habbits[j].habbitUsers);
-      // }
-
       const pair = await habbitWiseIteration(
         flag,
         challange.habbits[flag]._id,
@@ -163,51 +146,8 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
         users
       );
 
-      // console.log("PAIR: ", pair);
-      // console.log("usersArray: ", usersArray);
       usersArray = usersArray.concat(pair);
-      // console.log("arr2: ", arr2);
-      // usersArray = arr2;
-      // usersArray.push(arr2);
-      // const original = ['🦊'];
-      // let duplicate = [...usersArray, pair];
-
-      // duplicate.slice(pair);
-
-      //  usersArray.concat(pair);
-
-      // let duplicate = [...usersArray];
-      // console.log("usersArray before: ", usersArray);
-      // console.log("Duplicate: ", duplicate);
-      // usersArray.push(pair);
-      // console.log("usersArray: ", usersArray);
-      // usersArray = duplicate;
-      // Result
-      // console.log(typeof pair);
-      // console.log("Pair: ", pair);
-      const newP = { assign: pair };
-      // usersArray.push(newP);
-      const add = { updatedusers: pair };
-      // challange.habbits[flag] = await {
-      //   ...challange.habbits[flag],
-      //   ...pair,
-      // };
-      // const newHabb = newHabbits[flag];
-
-      // console.log("pair: ", newHabb);
-      // newHabbits[flag] = newHabb;
-      // newHabbits[flag].updatedUsers = pair;
-      // console.log("Loop: ", flag);
-      // console.log("pair: ", pair);
     }
-    // for (var j = 0; j < 5; j++) {
-    //   console.log("newHabbits: ", j, newHabbits[j]);
-    // }
-    console.log("usersArray: ", usersArray);
-    console.log("usersArray: ", usersArray.length);
-
-    // await Promise.all(Promises);
-    // console.log("New challange: ", challange);
     return res.status(200).send({ challange, usersArray });
   } catch (e) {
     console.log(e);
