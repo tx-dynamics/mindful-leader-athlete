@@ -15,6 +15,7 @@ router.post("/signup", userSignUpValidator, user.signUp);
 router.post("/login", userLoginValidator, user.login);
 router.post("/admin/login", user.adminLogin);
 router.post("/admin/signup", user.adminSignUp);
+router.post("/forgotPassword", user.forgotPassword);
 
 //PUT
 router.put("/change-password/", userPasswordValidator, user.changePassword);

@@ -9,6 +9,21 @@ const userService = require("../../models/user/userService");
 const companyService = require("../../models/company/companyService");
 const adminService = require("../../models/admin/adminService");
 const userHabbitService = require("../../models/UserHabbit/userHabbitService");
+const sgMail = require("@sendgrid/mail");
+sgMail.setApiKey(
+  "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"
+);
+
+function gen_rand(length) {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 
 module.exports.signUp = async (req, res) => {
   // var name = req.body.email.substring(0, req.body.email.lastIndexOf("@"));
@@ -303,6 +318,53 @@ module.exports.usersQuery = async (req, res) => {
   const total = await userService.countDocuments(conditions);
 
   res.send({ data: records, page: query.page, total });
+};
+
+module.exports.forgotPassword = async (req, res) => {
+  try {
+    let user = await userService.findOne({
+      email: req.body.email,
+    });
+    console.log("User: ", user);
+    if (!user) return res.status(400).send({ error: "Invalid email." });
+
+    var newPass = gen_rand(8);
+    console.log("newPass: ", newPass);
+    const salt = await bcrypt.genSalt(10);
+    updatedPassword = await bcrypt.hash(newPass, salt);
+    let newUser = await userService.findByIdAndUpdate(
+      { _id: user._id },
+      { $set: { password: updatedPassword } }
+    );
+    // user = await userService.save(user);
+    // console.log("User: ", newUser);
+
+    // user = _.omit(user, "password");
+    // user = JSON.parse(JSON.stringify(user));
+
+    var theHTML = `<b> Hi ${user.firstName}</b>, <br> You just request a password reset, here is your new password: <br> <b>${newPass}</b>`;
+
+    const msg = {
+      to: req.body.email, // Change to your recipient
+      from: "muqbausman@gmail.com", // Change to your verified sender
+      subject: "Forgot Password",
+      // text: "and easy to do anywhere, even with Node.js",
+      html: theHTML,
+    };
+    sgMail
+      .send(msg)
+      .then(() => {
+        console.log("Email sent");
+        res.status(200).send("Email sent successfully");
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(400).send({ err: "Email don't work on this server yet " });
+      });
+  } catch (e) {
+    console.log(e);
+    return res.status(400).send({ error: e.message });
+  }
 };
 
 module.exports.query = async (req, res) => {
