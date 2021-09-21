@@ -342,7 +342,7 @@ module.exports.forgotPassword = async (req, res) => {
     // user = _.omit(user, "password");
     // user = JSON.parse(JSON.stringify(user));
 
-    var theHTML = `<b> Hi ${user.firstName}</b>, <br> You just request a password reset, here is your new password: <br> <b>${newPass}</b>`;
+    var theHTML = `<b> Hi ${user.fullName}</b>, <br> You just request a password reset, here is your new password: <br> <b>${newPass}</b>`;
 
     const msg = {
       to: req.body.email, // Change to your recipient
