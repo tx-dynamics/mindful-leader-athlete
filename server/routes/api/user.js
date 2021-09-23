@@ -355,7 +355,7 @@ module.exports.forgotPassword = async (req, res) => {
       .send(msg)
       .then(() => {
         console.log("Email sent");
-        res.status(200).send("Email sent successfully");
+        res.status(200).send({ msg: "Email sent successfully" });
       })
       .catch((error) => {
         console.error(error);
