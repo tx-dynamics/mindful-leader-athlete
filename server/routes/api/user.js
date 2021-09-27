@@ -329,7 +329,7 @@ module.exports.forgotPassword = async (req, res) => {
     if (!user) return res.status(400).send({ error: "Invalid email." });
 
     var newPass = gen_rand(8);
-    console.log("newPass: ", newPass);
+    console.log("new Pass: ", newPass);
     const salt = await bcrypt.genSalt(10);
     updatedPassword = await bcrypt.hash(newPass, salt);
     let newUser = await userService.findByIdAndUpdate(
