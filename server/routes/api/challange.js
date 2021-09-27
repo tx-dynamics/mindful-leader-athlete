@@ -201,11 +201,11 @@ module.exports.getDateWiseChallange = async (req, res) => {
     var currentDate = moment(req.body.date).format("YYYY-MM-DD");
     console.log("Date: ", currentDate);
     const weekStart = moment(req.body.date)
-      .day("sunday")
+      .day("monday")
       .format("YYYY-MM-DD");
     console.log(weekStart);
     var weekEnd = moment(req.body.date)
-      .day("sunday")
+      .day("monday")
       .add(6, "days")
       .format("YYYY-MM-DD");
     console.log(weekEnd);
@@ -289,11 +289,11 @@ module.exports.getPreviousChallange = async (req, res) => {
       console.log("Prev Chall: ", prevChallange);
       var currentDate = moment(prevChallange.expiryDate).format("YYYY-MM-DD");
       weekStart = moment(prevChallange.expiryDate)
-        .day("sunday")
+        .day("monday")
         .format("YYYY-MM-DD");
       console.log(weekStart);
       weekEnd = moment(prevChallange.expiryDate)
-        .day("sunday")
+        .day("monday")
         .add(6, "days")
         .format("YYYY-MM-DD");
       console.log(weekEnd);
