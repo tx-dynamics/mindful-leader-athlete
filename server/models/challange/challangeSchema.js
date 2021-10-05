@@ -32,7 +32,7 @@ const modelSchema = new mongoose.Schema(
 // modelSchema.set("toObject", { virtuals: true });
 // modelSchema.set("toJSON", { virtuals: true });
 
-modelSchema.statics.validate = function (data) {
+modelSchema.statics.validate = function(data) {
   const schema = Joi.object({
     // _id: Joi.string(),
     challangeTitle: Joi.string().required(),
@@ -47,7 +47,7 @@ modelSchema.statics.validate = function (data) {
   return schema.validate(data);
 };
 
-modelSchema.statics.validateUpdate = function (data) {
+modelSchema.statics.validateUpdate = function(data) {
   const schema = Joi.object({
     challangeTitle: Joi.string().required(),
     company: Joi.string().required(),

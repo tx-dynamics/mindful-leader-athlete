@@ -111,12 +111,15 @@ const habbitWiseIteration = (index, habbitId, companyId, challange, users) =>
 //Get HabbitWise Score -> Habit
 module.exports.getHabbitWiseRanking = async (req, res) => {
   console.log("Company Id: ", req.body.companyId);
+  console.log("Start Date: ", req.body.startDate);
+  console.log("End Date: ", req.body.expiryDate);
+
   var currentDate = moment().format("YYYY-MM-DD");
   try {
     var challange = await challangeService.findOneAndSelect(
       {
-        startDate: { $lte: currentDate },
-        expiryDate: { $gte: currentDate },
+        startDate: { $eq: req.body.startDate },
+        expiryDate: { $eq: req.body.expiryDate },
         company: { $eq: req.body.companyId },
       },
       ["_id", "habbits", "challangeTitle"]
@@ -158,8 +161,8 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
 const individualIteration = (
   index,
   userId,
-  currentDate,
-  startDate,
+  currentDate, //theEnd
+  startDate, //theStart
   companyId,
   users
 ) =>
@@ -207,7 +210,7 @@ module.exports.getIndividualRanking = async (req, res) => {
       .add(29, "days")
       .format("YYYY-MM-DD");
   } else if (req.body.startDate) {
-    theEnd = moment().format("YYYY-MM-DD"); //Current Date
+    theEnd = req.body.expiryDate; //Current Date
     theStart = req.body.startDate;
   }
 
@@ -261,8 +264,8 @@ module.exports.getIndividualRanking = async (req, res) => {
 const departmentWiseIteration = (
   index,
   userId,
-  currentDate,
-  startDate,
+  currentDate, //theEnd
+  startDate, //theStart
   departmentId,
   users
 ) =>
@@ -291,7 +294,11 @@ const departmentWiseIteration = (
 module.exports.getDepartmentWiseRanking = async (req, res) => {
   console.log("Department Id: ", req.body.departmentId);
   console.log("Date: ", req.body.startDate);
-  var currentDate = moment().format("YYYY-MM-DD");
+  var theStart, theEnd;
+  // var currentDate = moment().format("YYYY-MM-DD");
+  theStart = req.body.startDate;
+  theEnd = req.body.expiryDate;
+
   try {
     var users = await userService.findAndSelect(
       { department: req.body.departmentId, company: req.body.companyId },
@@ -305,8 +312,10 @@ module.exports.getDepartmentWiseRanking = async (req, res) => {
       updatedUsers = await departmentWiseIteration(
         flag,
         us._id,
-        currentDate,
-        req.body.startDate,
+        // currentDate,
+        // req.body.startDate,
+        theEnd,
+        theStart,
         us.department,
         users
       );
@@ -366,7 +375,7 @@ module.exports.getCompanyDepartmentsRanking = async (req, res) => {
       .add(29, "days")
       .format("YYYY-MM-DD");
   } else if (req.body.startDate) {
-    theEnd = moment().format("YYYY-MM-DD"); //Current Date
+    theEnd = req.body.expiryDate; //Current Date
     theStart = req.body.startDate;
   }
 
