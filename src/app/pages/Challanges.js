@@ -152,7 +152,7 @@ export function Challanges(props) {
                   columns={[
                     { title: "Habit Title", field: "habbitTitle" },
                     {
-                      title: "Habit Description",
+                      title: "Habit Target",
                       field: "habbitDescription",
                     },
                   ]}

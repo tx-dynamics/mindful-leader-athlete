@@ -44,7 +44,7 @@ function CreateChallange(props) {
     e.preventDefault();
     console.log("SUBMIT: ", challangeTitle, companyName, startDate, expiryDate);
     if (
-      challangeTitle === "" ||
+      challangeTitle.length === "" ||
       companyName === "" ||
       startDate === "" ||
       expiryDate === ""
@@ -53,6 +53,23 @@ function CreateChallange(props) {
       return;
     }
 
+    for (let i = 0; i < formValues.length; i++) {
+      if (formValues[i].habbitTitle === "") {
+        toast.error("Habbit title is not allowed to leave empty");
+        return;
+      } else if (formValues[i].habbitTitle.length >= 50) {
+        toast.error("Your habit title is too lengthy");
+        return;
+      } else if (formValues[i].habbitDescription === "") {
+        toast.error("Habbit target is not allowed to leave empty");
+        return;
+      } else if (formValues[i].habbitDescription.length >= 84) {
+        toast.error("Your habit target is too lengthy");
+        return;
+      }
+    }
+
+    toast.success("Successfully Created");
     ChallangeService.createChallange({
       challangeTitle,
       companyName,
@@ -165,9 +182,9 @@ function CreateChallange(props) {
                   </div>
                   <div className="col-md-5">
                     <Form.Group controlId="formBasicPassword">
-                      <Form.Label> Habbit Description({index + 1})</Form.Label>
+                      <Form.Label> Habbit Target({index + 1})</Form.Label>
                       <Form.Control
-                        placeholder="Write a description text here ..."
+                        placeholder="Write a target text here ..."
                         rows="1"
                         type="textarea"
                         name="habbitDescription"
