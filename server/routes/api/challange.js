@@ -326,7 +326,9 @@ module.exports.getPreviousChallange = async (req, res) => {
         .sort({ expiryDate: "ascending" })
         .select(["startDate"])
         .lean();
-      if (!upComingChall) {
+
+      console.log("Upcom Chal", upComingChall);
+      if (upComingChall.length == 0) {
         upComingChallDate = false;
       } else {
         upComingChallDate = moment(upComingChall[0].startDate).format(

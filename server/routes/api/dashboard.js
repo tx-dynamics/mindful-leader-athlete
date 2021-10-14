@@ -124,6 +124,7 @@ module.exports.getHabbitWiseRanking = async (req, res) => {
       },
       ["_id", "habbits", "challangeTitle"]
     );
+    console.log("Challange", challange);
     if (!challange) return res.status(400).send({ msg: "No challange found" });
     var users = await userService.findAndSelect(
       { company: req.body.companyId },
