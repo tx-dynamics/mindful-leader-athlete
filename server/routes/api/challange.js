@@ -524,7 +524,6 @@ module.exports.completeHabbit = async (req, res) => {
   var currentDate = moment().format("YYYY-MM-DD");
   try {
     let data = req.body;
-    data.date = currentDate;
     const userHabbitFound = await userHabbitService.findOne({
       user: { $eq: data.user },
       habbit: { $eq: data.habbit },
