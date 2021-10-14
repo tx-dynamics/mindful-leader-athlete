@@ -538,7 +538,7 @@ module.exports.completeHabbit = async (req, res) => {
         habbit: { $eq: data.habbit },
         department: { $eq: data.department },
         company: { $eq: data.company },
-        date: { $eq: currentDate },
+        date: { $eq: data.date },
       });
       console.log("REMOVED: ", removedUser);
       return res.status(200).send("Done");
